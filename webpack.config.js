@@ -5,7 +5,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.ts?$/,
+        test: /(\.ts?$|\.tsx?$)/,
         use: 'ts-loader',
         exclude: /node_modules/,
       },
@@ -17,5 +17,6 @@ module.exports = {
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
+    library: "FFPalooza"
   },
 };
