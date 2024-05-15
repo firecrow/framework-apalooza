@@ -12,6 +12,14 @@
 </head>
 <body>
 <header>
+    <nav>
+        <ul>
+          <li data:target="react">React App</li>
+          <li data:target="angular">Angular App</li>
+          <li data:target="svelte">Svelte App</li>
+          <li data:target="vue">Vue App</li>
+        </ul>
+    </nav>
 </header>
 <section>
     <div id="react-root"></div>
@@ -20,9 +28,42 @@
 </footer>
 <script type="text/javascript">
   (function(){
+      const appMakeDict = {
+        'react': FFPalooza.ReactApp,
+        'vue': FFPalooza.VueApp,
+        'angular': FFPalooza.AngularApp,
+        'svelte': FFPalooza.SvelteApp,
+      };
+      const appDict = {};
+
+      let currentTarget = "";
+      function LoadApp(target){
+        const currentApp = appDict[currentTarget];
+        if(currentApp){
+          currentApp.hide();
+        }
+        const app = appDict[target];
+        if(app){
+          app.show();
+        }else{
+          const appMaker = appMakeDict[target];
+          if(appMaker){
+            appDict[target] = new appMaker();
+          }
+        }
+        currentTarget = target;
+      }
+
       window.addEventListener("load", function(){
-          console.log('init FFPalooza');
-          new FFPalooza.ReactApp();
+          const li_arr = document.querySelectorAll('nav ul li');
+          for(let i = 0; i < li_arr.length; i++){
+              (function(appLink){
+                const target = appLink.getAttribute('data:target');
+                appLink.onclick = () => {
+                    LoadApp(target);
+                }
+              })(li_arr[i]);
+          }
       });
   })();
 </script>

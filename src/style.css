@@ -1,0 +1,10 @@
+nav li {
+    list-style-type: none;
+    margin: 0;
+    padding: 8px 12px;
+    display: inline-block;
+}
+
+.hidden {
+    display:none;
+}
