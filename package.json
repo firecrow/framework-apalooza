@@ -1,5 +1,6 @@
 {
   "name": "framework-apaloza",
+  "type": "module",
   "version": "1.0.0",
   "dependencies": {
     "@types/react": "^18.3.2",
@@ -13,10 +14,12 @@
   },
   "scripts": {
     "build-react": "tsc -p react.tsconfig.json",
+    "build-svelte": "vite build",
     "build": "npm run build-react && webpack --mode production && cp -v src/*.html dist/ && cp -v src/*.css dist/",
     "clean": "rm -Rf dist/* rm -Rf pre-dist/*"
   },
   "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^3.1.0",
     "webpack-cli": "^5.1.4"
   }
 }
