@@ -1,9 +1,0 @@
-{
-    "compilerOptions": {
-        "target": "ESNext",
-        "module": "ESNext",
-        "jsx": "react",
-        "outDir": "dist"
-    },
-    "include": ["src/**/*.ts", "src/**/*.js", "src/**/*.svelte"]
-}

@@ -12,8 +12,9 @@
     "webpack": "^5.91.0"
   },
   "scripts": {
-    "build": "webpack --mode production && cp -v src/*.html dist/ && cp -v src/*.css dist/",
-    "clean": "rm -Rf dist/*"
+    "build-react": "tsc -p react.tsconfig.json",
+    "build": "npm run build-react && webpack --mode production && cp -v src/*.html dist/ && cp -v src/*.css dist/",
+    "clean": "rm -Rf dist/* rm -Rf pre-dist/*"
   },
   "devDependencies": {
     "webpack-cli": "^5.1.4"
