@@ -13,10 +13,13 @@
     "webpack": "^5.91.0"
   },
   "scripts": {
+    "clean": "rm -Rf dist/* rm -Rf pre-dist/*",
     "build-react": "tsc -p react.tsconfig.json",
-    "build-svelte": "vite build",
-    "build": "npm run build-react && webpack --mode production && cp -v src/*.html dist/ && cp -v src/*.css dist/",
-    "clean": "rm -Rf dist/* rm -Rf pre-dist/*"
+    "webpack-react":"webpack --mode production && cp pre-dist/react-app.js dist/",
+    "build-svelte": "vite build && cp pre-dist/svelte-app.umd.js dist/svelte-app.js",
+    "build-apps": "npm run build-react && npm run webpack-react && npm run build-svelte",
+    "copy-static": "cp -v src/*.html dist/ && cp -v src/*.css dist/",
+    "build": "npm run build-apps && npm run copy-static"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.1.0",

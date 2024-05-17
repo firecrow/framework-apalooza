@@ -2,4 +2,4 @@
   export let value;
 </script>
 
-<input></input>
+<input />

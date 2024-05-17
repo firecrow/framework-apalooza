@@ -1,4 +1,4 @@
-const path = require("path");
+const path = require('path');
 
 module.exports = {
   entry: './pre-dist/index.js',
@@ -16,8 +16,8 @@ module.exports = {
     extensions: ['.js'],
   },
   output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),
+    filename: 'react-app.js',
+    path: path.resolve(__dirname, 'pre-dist'),
     library: "FFPalooza"
   },
 };
