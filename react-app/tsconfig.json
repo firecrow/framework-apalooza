@@ -3,8 +3,8 @@
         "target": "es6",
         "module": "CommonJS",
         "jsx": "react",
-        "outDir": "pre-dist",
+        "outDir": "dist",
         "sourceMap": false 
     },
-    "include": ["src/ui-react/**/*.ts", "src/ui-react/**/*.js"]
+    "include": ["src/ui/**/*.ts", "src/ui/**/*.js"]
 }

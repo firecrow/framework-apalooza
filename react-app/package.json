@@ -1,0 +1,20 @@
+{
+  "name": "framework-apaloza",
+  "version": "1.0.0",
+  "dependencies": {
+    "@types/react": "^18.3.2",
+    "@types/react-dom": "^18.3.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.4.5"
+  },
+  "scripts": {
+    "clean": "rm -Rf dist/* && rm public/app.js",
+    "build": "tsc && webpack --mode production"
+  },
+  "devDependencies": {
+    "ts-loader": "^9.5.1",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4"
+  }
+}

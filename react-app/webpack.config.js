@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  entry: './pre-dist/index.js',
+  entry: './dist/index.js',
   module: {
     rules: [
       {
@@ -16,8 +16,8 @@ module.exports = {
     extensions: ['.js'],
   },
   output: {
-    filename: 'react-app.js',
-    path: path.resolve(__dirname, 'pre-dist'),
-    library: "FFPalooza"
+    filename: 'app.js',
+    path: path.resolve(__dirname, 'public'),
+    library: "FwpReact"
   },
 };

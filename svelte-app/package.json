@@ -1,0 +1,17 @@
+{
+  "name": "framework-apaloza",
+  "type": "module",
+  "version": "1.0.0",
+  "dependencies": {
+    "svelte": "^4.2.17",
+    "typescript": "^5.4.5"
+  },
+  "scripts": {
+    "clean": "rm -Rf dist/* && rm public/app.js",
+    "build": "vite build && cp dist/svelte-app.umd.js public/app.js"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^3.1.0",
+    "webpack-cli": "^5.1.4"
+  }
+}

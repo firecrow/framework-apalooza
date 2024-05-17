@@ -5,11 +5,11 @@ import * as path from 'path';
 export default defineConfig({
   build: {
     lib: {
-      entry: path.resolve(__dirname, 'src/ui-svelte/input.svelte'),
-      name: 'SvelteApp',
+      entry: path.resolve(__dirname, 'src/ui/input.svelte'),
+      name: 'FwpSvelte',
       fileName: (format) => `svelte-app.${format}.js`
     },
-    outDir: "pre-dist",
+    outDir: "dist",
     rollupOptions : {
       external: ['svelt-app'],
       output : {},
