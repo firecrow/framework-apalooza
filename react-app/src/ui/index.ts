@@ -2,7 +2,7 @@ import {createRoot} from "react-dom/client";
 import {Layout} from "./layout";
 import * as React from "react";
 
-export class ReactApp  {
+export class App  {
     container: HTMLElement;
     constructor(){
         let x:number = 0;
