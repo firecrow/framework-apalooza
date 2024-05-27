@@ -1,0 +1,26 @@
+{
+  "name": "angular app",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {
+    "build": "ng build"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/common": "17.2.4",
+    "@angular/compiler": "17.2.4",
+    "@angular/core": "17.2.4",
+    "@angular/platform-browser": "17.2.4",
+    "@angular/platform-browser-dynamic": "17.2.4",
+    "tslib": "^2.3.0",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "17.2.3",
+    "@angular/cli": "17.2.3",
+    "@angular/compiler-cli": "17.2.4",
+    "@types/node": "^16.11.35",
+    "copyfiles": "^2.4.1",
+    "ts-node": "~10.9.0"
+  }
+}
