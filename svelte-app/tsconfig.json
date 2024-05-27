@@ -1,9 +1,0 @@
-{
-    "compilerOptions": {
-        "target": "es6",
-        "module": "CommonJS",
-        "outDir": "dist",
-        "sourceMap": false 
-    },
-    "include": ["src/ui-react/**/*.ts", "src/ui-react/**/*.js"]
-}

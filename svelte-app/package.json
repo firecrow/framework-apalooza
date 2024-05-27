@@ -1,17 +1,24 @@
 {
-  "name": "framework-apaloza",
-  "type": "module",
+  "name": "svelte-app",
   "version": "1.0.0",
-  "dependencies": {
-    "svelte": "^4.2.17",
-    "typescript": "^5.4.5"
-  },
+  "private": true,
+  "type": "module",
   "scripts": {
-    "clean": "rm -Rf dist/* && rm public/app.js",
-    "build": "vite build && cp dist/svelte-app.umd.js public/app.js"
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "start": "sirv public --no-clear"
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^3.1.0",
-    "webpack-cli": "^5.1.4"
+    "@rollup/plugin-commonjs": "^24.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.0",
+    "@rollup/plugin-terser": "^0.4.0",
+    "rollup": "^3.15.0",
+    "rollup-plugin-css-only": "^4.3.0",
+    "rollup-plugin-livereload": "^2.0.0",
+    "rollup-plugin-svelte": "^7.1.2",
+    "svelte": "^3.55.0"
+  },
+  "dependencies": {
+    "sirv-cli": "^2.0.0"
   }
 }
