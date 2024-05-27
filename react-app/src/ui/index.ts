@@ -4,11 +4,9 @@ import * as React from "react";
 
 export class App  {
     container: HTMLElement;
-    constructor(){
-        let x:number = 0;
-        console.log(x + 100);
+    constructor(container: HTMLElement){
+        this.container = container;
 
-        const container = document.getElementById("react-root");
         if(container){
             this.container = container;
             const root = createRoot(this.container);

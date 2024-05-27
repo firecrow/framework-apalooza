@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "rollup -c",
+    "clean": "rm -Rf dist/* && rm public/app.js",
+    "build": "rollup -c && cp dist/app.js public/app.js",
     "dev": "rollup -c -w",
     "start": "sirv public --no-clear"
   },

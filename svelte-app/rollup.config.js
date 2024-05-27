@@ -34,7 +34,7 @@ export default {
 	output: {
 		sourcemap: true,
 		format: 'iife',
-		name: 'SvelteApp',
+		name: 'FwpSvelte',
 		file: 'dist/app.js'
 	},
 	plugins: [

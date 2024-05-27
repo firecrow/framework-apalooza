@@ -1,10 +1,11 @@
-import App  from './App.svelte';
+import SvelteApp  from './SvelteApp.svelte';
 
-export class SvelteApp  {
+export class App  {
     container;
     constructor(container){
         this.container = container;
-        const app = new App({
+        console.log('runnint svelte app');
+        const app = new SvelteApp({
             target: container,
             props: {
                 name: 'svelte-app'
@@ -18,9 +19,3 @@ export class SvelteApp  {
         this.container.classList.remove('hidden');
     }
 }
-
-const wrapper = {
-    App:SvelteApp
-}
-
-export default wrapper;

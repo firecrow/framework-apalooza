@@ -23,50 +23,11 @@
     </nav>
 </header>
 <section>
-    <div id="react-root"></div>
+    <div id="app-roots"></div>
 </section>
 <footer>
 </footer>
-<script type="text/javascript">
-  (function(){
-      const appMakeDict = {
-        'react': "FwpReact" in window && FwpReact,
-        'vue': "FwpVue" in window && FwpVue,
-        'angular': "FwpAngular" in window && FwpAngular,
-        'svelte': "FwpSvelte" in window && FwpSvelte,
-      };
-      const appDict = {};
-
-      let currentTarget = "";
-      function LoadApp(target){
-        const currentApp = appDict[currentTarget];
-        if(currentApp){
-          currentApp.hide();
-        }
-        const app = appDict[target];
-        if(app){
-          app.show();
-        }else{
-          const appMaker = appMakeDict[target];
-          if(appMaker){
-            appDict[target] = new appMaker.App();
-          }
-        }
-        currentTarget = target;
-      }
-
-      window.addEventListener("load", function(){
-          const li_arr = document.querySelectorAll('nav ul li');
-          for(let i = 0; i < li_arr.length; i++){
-              (function(appLink){
-                const target = appLink.getAttribute('data:target');
-                appLink.onclick = () => {
-                    LoadApp(target);
-                }
-              })(li_arr[i]);
-          }
-      });
-  })();
+<script type="text/javascript" src="wrapper.js">
 </script>
 </body>
 </html>
