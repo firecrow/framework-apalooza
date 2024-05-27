@@ -5,5 +5,25 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from './app/app.component';
 
-bootstrapApplication(AppComponent, {providers: []})
-  .catch(err => console.error(err));
+export class App  {
+    container: HTMLElement;
+    constructor(container: HTMLElement){
+        this.container = container;
+
+        if(!container.hasChildNodes()){
+            const root = document.createElement('fancy-thing');
+            container.appendChild(root);
+        }
+
+        bootstrapApplication(AppComponent, {providers: []})
+          .catch(err => console.error(err));
+    }
+    hide(){
+        this.container.classList.add('hidden');
+    }
+    show(){
+        this.container.classList.remove('hidden');
+    }
+}
+
+export const FwpAngular = {App: App};

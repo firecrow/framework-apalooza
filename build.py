@@ -46,6 +46,6 @@ if __name__ == "__main__":
     builder = Builder()
     builder.add('react-app')
     builder.add('svelte-app')
-    print("dirs found {}".format(repr(builder.app_dirs)))
+    builder.add('angular-app')
     for key, app in builder.app_dirs.items():
         shutil.copy(app['js-filename'], "public/{}.js".format(key))

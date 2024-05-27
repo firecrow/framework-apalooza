@@ -1,12 +1,13 @@
 
   (function(){
-      const appMakeDict = {
-        'react': "FwpReact" in window && FwpReact,
-        'vue': "FwpVue" in window && FwpVue,
-        'angular': "FwpAngular" in window && FwpAngular,
-        'svelte': "FwpSvelte" in window && FwpSvelte,
+      const appMakeKeys = {
+        'react': "FwpReact",
+        'vue': "FwpVue",
+        'angular': "FwpAngular",
+        'svelte': "FwpSvelte",
       };
       const appDict = {};
+      const appMakeDict = {};
 
       function getOrMakeRoot(id){
           let root = document.getElementById(id);
@@ -18,26 +19,49 @@
           return root;
       }
 
+      function hideCurrent(){
+          const currentApp = appDict[currentTarget];
+          if(currentApp){
+              currentApp.hide();
+          }
+      }
+
+      function addScript(src, callback){
+         console.log('making script: ' + src);
+         const script = document.createElement('script'); 
+         script.setAttribute('src', src);
+         script.addEventListener('load', callback);
+         document.head.appendChild(script);
+      }
+
+      function register(target){
+         if(window[appMakeKeys[target]]){
+            appMakeDict[target] = window[appMakeKeys[target]];
+            LoadApp(target);
+         }else{
+            throw new Error('Error: unable to find global var ' + appMakeKeys[target] + ' for target ' + target);
+         }
+      }
+
       let currentTarget = "";
       function LoadApp(target){
-        const currentApp = appDict[currentTarget];
-        if(currentApp){
-          currentApp.hide();
-        }
         const app = appDict[target];
         if(app){
+          hideCurrent();
           app.show();
+          currentTarget = target;
         }else{
           const appMaker = appMakeDict[target];
-          if(appMaker){
+          if(!appMaker){
+              addScript(target + '-app.js', () => register(target));
+          }else{
+            hideCurrent();
             const id = target+"-root";
             const root = getOrMakeRoot(id);
             appDict[target] = new appMaker.App(root);
-          }else{
-            console.warn("App Maker not found for: " + target);
+            currentTarget = target;
           }
         }
-        currentTarget = target;
       }
 
       window.addEventListener("load", function(){
