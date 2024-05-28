@@ -2,6 +2,8 @@
 *  Protractor support is deprecated in Angular.
 *  Protractor is used in this example for compatibility with Angular documentation tools.
 */
+declare var window:any;
+
 import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from './app/app.component';
 
@@ -26,4 +28,4 @@ export class App  {
     }
 }
 
-export const FwpAngular = {App: App};
+window.FwpAngular = {App: App};

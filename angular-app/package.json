@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "build": "ng build && cat dist/browser/poly*.js > public/app.js && echo '\n// end polyfill\n' >> public/app.js && cat dist/browser/main*.js >> public/app.js"
+    "build": "ng build && cp dist/browser/main*.js public/app.js"
   },
   "private": true,
   "dependencies": {

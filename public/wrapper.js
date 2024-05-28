@@ -1,13 +1,22 @@
 
   (function(){
-      const appMakeKeys = {
-        'react': "FwpReact",
-        'vue': "FwpVue",
-        'angular': "FwpAngular",
-        'svelte': "FwpSvelte",
-      };
-      const appDict = {};
-      const appMakeDict = {};
+      const State = {
+        keys: {
+          'react': "FwpReact",
+          'vue': "FwpVue",
+          'angular': "FwpAngular",
+          'svelte': "FwpSvelte",
+        },
+        apps: {},
+        options: {
+            'angular-app.js': {'type': 'module'},
+            'angular-polyfill.js': {'type': 'module'}
+        },
+        preloadScripts: {'angular': ['angular-polyfill.js']},
+        scriptsAdded: {},
+        makers: {},
+        currentKey: "",
+      }
 
       function getOrMakeRoot(id){
           let root = document.getElementById(id);
@@ -20,46 +29,69 @@
       }
 
       function hideCurrent(){
-          const currentApp = appDict[currentTarget];
-          if(currentApp){
-              currentApp.hide();
+          if(State.currentKey && State.apps[State.currentKey]){
+              State.apps[State.currentKey].hide();
           }
       }
 
       function addScript(src, callback){
-         console.log('making script: ' + src);
+         if(State.scriptsAdded[src]){
+              return false;
+         }
+
          const script = document.createElement('script'); 
          script.setAttribute('src', src);
+         script.setAttribute('type', 'text/javascript');
+         const options = State.options[src];
+         for(let key in options){
+            script.setAttribute(key, options[key]);
+         }
          script.addEventListener('load', callback);
          document.head.appendChild(script);
+         State.scriptsAdded[src] = true;
+         return true;
       }
 
-      function register(target){
-         if(window[appMakeKeys[target]]){
-            appMakeDict[target] = window[appMakeKeys[target]];
+      function Register(target){
+         const key = State.keys[target];
+         if(window[key]){
+            State.makers[target] = window[key];
             LoadApp(target);
          }else{
-            throw new Error('Error: unable to find global var ' + appMakeKeys[target] + ' for target ' + target);
+            throw new Error('Error: unable to find global var ' + key + ' for target ' + target);
          }
       }
 
-      let currentTarget = "";
       function LoadApp(target){
-        const app = appDict[target];
+        const app = State.apps[target];
         if(app){
           hideCurrent();
           app.show();
-          currentTarget = target;
+          State.currentKey = target;
         }else{
-          const appMaker = appMakeDict[target];
-          if(!appMaker){
-              addScript(target + '-app.js', () => register(target));
+          const maker = State.makers[target];
+          if(!maker){
+              console.log(State);
+              if(State.preloadScripts[target]){
+                  for(let i = 0; i < State.preloadScripts[target].length; i++){
+                      const src = State.preloadScripts[target][i];
+                      console.log('adding ' + src);
+                      if(addScript(src, () => LoadApp(target), State.options[src])){
+                          // This return is reached only a new script is added and then the LoadApp functino
+                          // will be called again when it's finished loading
+                          return ;
+                      }
+                  }
+              }
+              const src = target + '-app.js'; 
+              addScript(src, () => Register(target));
+              // Register will in-turn call LoadApp again when the script loads
           }else{
             hideCurrent();
             const id = target+"-root";
             const root = getOrMakeRoot(id);
-            appDict[target] = new appMaker.App(root);
-            currentTarget = target;
+            State.apps[target] = new maker.App(root);
+            State.currentKey = target;
           }
         }
       }
