@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
   selector: 'angular-root',
   standalone: true,
   imports: [],
-  template: `<h1>Hello world!</h1>`,
+  template: `<input value="hello from angular" />`,
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-import os, shutil, subprocess
+import os, glob, shutil, subprocess
 
-APP_JS_FILE_NAME = "app.js"
+APP_JS_FILE_GLOB = "*.js"
 
 class Builder(object):
     def __init__(self):
@@ -17,9 +17,8 @@ class Builder(object):
            with open("{}/public/name.txt".format(app_dir)) as x:
               app_dict["name"] = x.read().strip()
 
-           path = "{}/public/{}".format(app_dir, APP_JS_FILE_NAME)
-           assert os.path.exists(path)
-           app_dict["js-filename"] = path
+           path = "{}/public/{}".format(app_dir, APP_JS_FILE_GLOB)
+           app_dict["js-fileglob"] = path
 
            app_path = "{}/{}".format(self.root_path, app_dir)
            print("[Building App: {}]".format(app_path))
@@ -48,4 +47,7 @@ if __name__ == "__main__":
     builder.add('svelte-app')
     builder.add('angular-app')
     for key, app in builder.app_dirs.items():
-        shutil.copy(app['js-filename'], "public/{}.js".format(key))
+        name = key.replace('-app', '')
+        for file_name in glob.glob(app['js-fileglob']):
+            print("copying {} to /public/{}-{}".format(file_name, name, os.path.basename(file_name)))
+            shutil.copy(file_name, "public/{}-{}".format(name, os.path.basename(file_name)))

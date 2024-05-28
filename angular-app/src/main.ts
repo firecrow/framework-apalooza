@@ -13,7 +13,7 @@ export class App  {
         this.container = container;
 
         if(!container.hasChildNodes()){
-            const root = document.createElement('fancy-thing');
+            const root = document.createElement('angular-root');
             container.appendChild(root);
         }
 
