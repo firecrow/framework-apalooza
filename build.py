@@ -46,6 +46,7 @@ if __name__ == "__main__":
     builder.add('react-app')
     builder.add('svelte-app')
     builder.add('angular-app')
+    builder.add('vue-app')
     for key, app in builder.app_dirs.items():
         name = key.replace('-app', '')
         for file_name in glob.glob(app['js-fileglob']):
