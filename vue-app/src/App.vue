@@ -1,6 +1,8 @@
 <script setup lang="ts">
+    const PROD_COLUMN = 0;
+    const METRIC_COLUMN = 1;
     let data = {
-        headers: ['', '', 'Product', 'Qrtr0', 'Qrtr1','Qrtr2','Qrtr3','Qrtr4','Qrtr5','Qrtr6','Qrtr7'],
+        headers: ['Product', 'Metric', 'Qrtr0', 'Qrtr1','Qrtr2','Qrtr3','Qrtr4','Qrtr5','Qrtr6','Qrtr7'],
         rows: [
             ['Basic', 'Growth',0,0,0,0,0,0,0,0],
             ['Basic', 'Units',0,0,0,0,0,0,0,0],
@@ -20,6 +22,16 @@
 
 <template>
     <input value="hi from Vue" />
+    <table class="data-points">
+        <thead>
+            <tr>
+                <th v-for="label in data.headers">{{ label }}</th>
+            </tr>
+        </thead>
+        <tr :class="'product-'+row[PROD_COLUMN]+' metric-'+row[METRIC_COLUMN]" v-for="row in data.rows">
+            <td v-for="value in row">{{ value }}</td>
+        </tr>
+    </table>
 </template>
 
 <style scoped>

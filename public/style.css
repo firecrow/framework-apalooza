@@ -8,3 +8,27 @@ nav li {
 .hidden {
     display:none;
 }
+
+table.data-points {
+    border-collapse: collapse;
+    margin: 24px;
+}
+
+table.data-points th ,
+table.data-points td {
+    padding: 4px 6px;
+}
+
+table.data-points tr:nth-child(odd) {
+    background: #ccc;
+}
+
+table.data-points tr:first-child {
+    background: transparent;
+}
+
+table.data-points th {
+    border-style: solid;
+    border-width: 0 0 1px 0;
+    border-color: #666;
+}
