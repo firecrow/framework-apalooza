@@ -1,6 +1,6 @@
 # Framework-apalooza
 
-This is a frankenstein of four frameworks, as a demonstration of each: React, Svelte, Angular and View, all in one front-end app.
+This is a frankenstein of four frameworks, as a demonstration of each: `React`, `Svelte`, `Angular` and `Vue`, all in one front-end app.
 
 ## Project Purpose
 
@@ -13,6 +13,10 @@ The `public` directory contains what will be served to users. With a script for 
 ## Build System
 
 The build system starts with `build.py` which calls `npm run build` in each framework-app's directory. Each npm pipeline generates JavaScript files in their respective `public` directory. The `build.py` script then pulls them into the outer `public` directory. For example `react-app/public/app.js` becomes `public/react-app.js` and `angular-app/public/polyfill.js` becomes `/public/angular-polyfill.js`.
+
+## Status
+
+The build system(s) for each framerowk are functioning, with an example application written in each on the way.
 
 
 ## Code Organization
