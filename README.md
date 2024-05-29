@@ -8,7 +8,7 @@ The project is inteneded to demonstrate proficiency with `Node.js` build tools, 
 
 ## Runtime Composition 
 
-The `public` directory contains what will be served to users. With a script for each app named `<name>-app.js` for each script. These scripts are loaded when the user clicks on the tab for that frameworks app.
+The `public` directory contains what will be served to users. With a file for each app named `<name>-app.js` for each framework. These scripts are loaded when the user clicks on the tab for that frameworks app.
 
 ## Build System
 
