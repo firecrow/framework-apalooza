@@ -1,6 +1,6 @@
 # Framework-apalooza
 
-This is a frankenstein of four frameworks, as a demonstration of each: `React`, `Svelte`, `Angular` and `Vue`, all in one front-end app.
+This is a single app build from four frameworks, as a demonstration of each: `React`, `Svelte`, `Angular` and `Vue`, all in one front-end app.
 
 ## Project Purpose
 
