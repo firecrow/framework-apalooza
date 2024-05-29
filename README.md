@@ -4,7 +4,7 @@ This is a frankenstein of four frameworks, as a demonstration of each: `React`, 
 
 ## Project Purpose
 
-The project is inteneded to demonstrate proficiency with `Node.js` build tools, and show how several different frameworks can all play nice together when they arrive in the browser. Each app has a different methodology and different development style, but all share common goals and commong outcomes. As the project matures I intend to blog extensively about my experience building the same functionality with differnet frameworks.
+The project is inteneded to demonstrate proficiency with `NPM` and `Node.js` build tools as well as the ins-and-outs of various popular frameworks, and show how they can all play nice together when they arrive in the browser. Each app has a different methodology and different development style, but all share common goals and common outcomes. As the project matures I intend to blog extensively about my experience building the same functionality with differnet frameworks.
 
 ## Runtime Composition 
 
