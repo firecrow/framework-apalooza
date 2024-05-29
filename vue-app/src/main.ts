@@ -1,5 +1,3 @@
-import './assets/main.css'
-
 import { createApp } from 'vue'
 import App from './App.vue'
 
@@ -11,12 +9,12 @@ class MyApp  {
     constructor(container: HTMLElement){
         this.container = container;
 
-        if(!container.hasChildNodes()){
-            const root = document.createElement('angular-root');
-            container.appendChild(root);
+        if(!container.id){
+            container.id = 'vue-root'
         }
 
-        createApp(App).mount('#app')
+        console.log('mounting Vue');
+        createApp(App).mount('#vue-root')
     }
     hide(){
         this.container.classList.add('hidden');
