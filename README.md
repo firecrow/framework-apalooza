@@ -16,7 +16,7 @@ The build system starts with `build.py` which calls `npm run build` in each fram
 
 ## Status
 
-The build system(s) for each framerowk are functioning, with an example application written in each on the way.
+The build system(s) for each framework are functioning, with an example application written in each on the way.
 
 
 ## Code Organization
