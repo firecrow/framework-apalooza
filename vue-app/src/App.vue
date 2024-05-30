@@ -18,10 +18,41 @@
             ['Pro', 'Total',0,0,0,0,0,0,0,0],
         ]
     }
+
+    let products = {
+        basic: {
+            name: 'Basic',
+            price: 22.39,
+            description: 'This is a basic model of the system with the type of features that everyday users would need.',
+            qrt0units: 100,
+        },
+        advanced:  {
+            name: 'Advanced',
+            price: 56.32,
+            description: 'This is a targeted at mass-subscription company users. It has the tracking and accountability features required in larger organizations.',
+            qrt0units: 30,
+        },
+        pro:  {
+            name: 'Pro',
+            price: 224.19,
+            description: 'This has the expert features that few will need, but it will be highly valued for what it delivers.',
+            qrt0units: 10,
+        }
+    }
+
 </script>
 
 <template>
     <input value="hi from Vue" />
+    <div class="products-info">
+        <article v-for="prod in products">
+            <h2>{{ prod.name }}</h2>
+            <span>Price: {{ prod.price }}</span><br />
+            <p>
+                {{ prod.description}}
+            </p>
+        </article>
+    </div>
     <table class="data-points">
         <thead>
             <tr>

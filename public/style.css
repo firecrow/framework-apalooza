@@ -32,3 +32,11 @@ table.data-points th {
     border-width: 0 0 1px 0;
     border-color: #666;
 }
+
+.products-info article {
+    border: 1px solid #666;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 12px;
+    max-width: 260px;
+}
