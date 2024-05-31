@@ -1,4 +1,8 @@
 <script setup lang="ts">
+
+    import EditNum from './components/EditNum.vue';
+    import FieldBox from './components/FieldBox.vue';
+
     const PROD_COLUMN = 0;
     const METRIC_COLUMN = 1;
     let data = {
@@ -24,19 +28,43 @@
             name: 'Basic',
             price: 22.39,
             description: 'This is a basic model of the system with the type of features that everyday users would need.',
-            qrt0units: 100,
+            launch: {
+                qrtr: 0,
+                units: 100,
+            },
+            growth: {
+               min: 0.9, 
+               max: 1.2,
+               cycle: 4
+            }
         },
         advanced:  {
             name: 'Advanced',
             price: 56.32,
             description: 'This is a targeted at mass-subscription company users. It has the tracking and accountability features required in larger organizations.',
-            qrt0units: 30,
+            launch: {
+                qrtr: 3,
+                units: 30,
+            },
+            growth: {
+               min: 1.1,
+               max: 1.4,
+               cycle: 6
+            }
         },
         pro:  {
             name: 'Pro',
             price: 224.19,
             description: 'This has the expert features that few will need, but it will be highly valued for what it delivers.',
-            qrt0units: 10,
+            launch: {
+                qrtr: 5,
+                units: 10,
+            },
+            growth: {
+               min: 1.0,
+               max: 1.2,
+               cycle: 4
+            }
         }
     }
 
@@ -47,12 +75,22 @@
     <div class="products-info">
         <article v-for="prod in products">
             <h2>{{ prod.name }}</h2>
-            <span>Price: {{ prod.price }}</span><br />
+            <EditNum name="Price" :value="prod.price" />
             <p>
                 {{ prod.description}}
             </p>
+            <FieldBox name="Growth">
+                <EditNum name="Cycle" :value="prod.growth.cycle" />
+                <EditNum name="Min" :value="prod.growth.min" />
+                <EditNum name="Max" :value="prod.growth.max" />
+            </FieldBox>
+            <FieldBox name="Launch">
+                <EditNum name="Quarter" :value="prod.launch.qrtr" />
+                <EditNum name="Units" :value="prod.launch.units" />
+            </FieldBox>
         </article>
     </div>
+    <div style="clear:both"></div>
     <table class="data-points">
         <thead>
             <tr>

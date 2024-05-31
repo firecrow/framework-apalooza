@@ -39,4 +39,29 @@ table.data-points th {
     padding: 12px;
     margin: 12px;
     max-width: 260px;
+    float: left;
+}
+
+.field-box {
+    border: 1px solid grey;
+    margin: 24px 4px;
+    padding: 0 24px 24px 24px;
+}
+
+.field-box .label {
+    background: white;
+    position: relative;
+    top: -8px;
+    left: -8px;
+    padding: 0 8px;
+}
+
+label.edit-num {
+    display: block;
+}
+
+label.edit-num input {
+    width: 32px;
+    display: inline-block;
+    margin-left: 6px;
 }
