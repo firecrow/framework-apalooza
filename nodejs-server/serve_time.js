@@ -8,15 +8,16 @@ const param_keys = [SID_KEYWORD];
 
 /* util functions */
 function makeSid(params){
+   // take two seperate time methods and some random to make a random identifier
    const now_s = String(new Date().getTime()); 
    const now_abbrev = now_s.substring(now_s.length-4, now_s.length);
+
    const ts = String(process.hrtime.bigint());
    const ts_abbrev = ts.substring(ts.length-4, ts.length);
-   const ip = params.ip || '';
+
    const rand = String(Math.random()).substring(2, 12);
+
    const buff = Buffer.from(`${now_abbrev}${ts_abbrev}${rand}`);
-   console.log(buff.toString());
-   console.log(`${now_abbrev}.${ts_abbrev}.${rand}`);
    return buff.toString('base64');
 }
 
