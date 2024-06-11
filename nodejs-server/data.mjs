@@ -1,7 +1,7 @@
-import {Model, Growth, Launch, Product, ProductSet} from "./calc";
+import {Model, Growth, Launch, Product, ProductSet} from "./calc.mjs";
 
 /* util functions */
-export function InitStartModel(){
+function InitStartModel(){
     const model = new Model();
     model.prodSet = new ProductSet([
         new Product({
@@ -35,3 +35,5 @@ export function InitStartModel(){
     ]);
     return model;
 } 
+
+export { InitStartModel };

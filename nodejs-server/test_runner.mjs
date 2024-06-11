@@ -1,5 +1,3 @@
-import { Literal } from "./utils";
-
 const TEST_STARTED = 'started';
 const TEST_PASS = 'started';
 const TEST_FAIL = 'started';
@@ -33,12 +31,13 @@ class TestCase {
     }
 }
 
-class TestSet extends Literal {
+class TestSet {
     func;
     cases;
-    results
+    results;
     constructor(obj){
-        super(obj);
+        this.cases = obj.cases;
+        this.func = obj.func;
         this.results = {
             pass: 0,
             fail: 0,
@@ -46,6 +45,7 @@ class TestSet extends Literal {
         }
     }
     run(){
+        console.log('run\n', this);
         for(let i = 0; i < this.cases.length; i++){
             const cse = this.cases[i];
             const res = this.func(cse);

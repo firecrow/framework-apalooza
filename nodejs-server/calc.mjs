@@ -1,31 +1,38 @@
-import { Literal } from "./utils";
 
-export class Launch extends Literal {
+export class Launch {
     qtr;
     units;
     price;
     constructor(obj){
-        super(obj);
+        this.qtr = obj.qtr;
+        this.units = obj.units;
+        this.price = obj.price;
     }
 }
 
-export class Growth extends Literal {
+export class Growth {
     min;
     max;
     cycle;
     constructor(obj){
-        super(obj);
+        this.min = obj.min;
+        this.max = obj.max;
+        this.cycle = obj.cycle;
     }
 }
 
-export class Product extends Literal {
+export class Product {
     name;
     key;
     description;
     launch;
     growth;
     constructor(obj){
-        super(obj);
+        this.name = obj.name;
+        this.key = obj.key;
+        this.description = obj.description;
+        this.launch = obj.launch;
+        this.growth = obj.growth;
     }
 }
 
