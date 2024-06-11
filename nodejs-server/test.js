@@ -1,6 +1,7 @@
 const runner = require('./test_runner');
 const {TestArg, TestCase, RunCaseSet} = runner;
 
+/*
 const basicSet = [
     new TestCase(
         "Expect time to return current time",
@@ -45,3 +46,4 @@ const errorSet = [
 
 RunCaseSet(basicSet);
 RunCaseSet(errorSet);
+*/

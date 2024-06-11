@@ -1,11 +1,6 @@
 const http = require('http');
 const fs = require('fs');
 
-UPDATE_KEYWORD = 'update';
-START_KEYWORD = 'start';
-SID_KEYWORD = 'session';
-const param_keys = [SID_KEYWORD];
-
 /* util functions */
 function makeSid(params){
    // take two seperate time methods and some random to make a random identifier
@@ -21,60 +16,12 @@ function makeSid(params){
    return buff.toString('base64');
 }
 
-/* election functions */
+/* generic election functions */
 function always(method, path, params){
     return true;
 }
 
-function update(method, path, params){
-    return method === "POST" && UPDATE_KEYWORD in params;
-}
-
-function start(method, path, params){
-    return method === "GET" && START_KEYWORD in params;
-}
-
-function hasSession(method, path, params){
-    return SID_KEYWORD in params;
-}
-
-/* response serve functions */
-function dataServe(res, now, method, path, params){
-    const obj = {
-        currentTime: now.toISOString(),
-    };
-
-    const tzArg = params[TZ_KEYWORD] && params[TZ_KEYWORD].toUpperCase();
-    const tz = tzlist.tzabbrev[tzArg];
-    let code = 500;
-    if(tz){
-        const adjusted = adjustTime(now, tz);
-        obj.ajustedTime = adjusted.toISOString();
-        obj.timezone = structuredClone(tz);
-        obj.timezone.abbrev = tzArg;
-        success = true;
-        code = 200;
-    }else{
-        obj.error = "Timezone not found in international list, looking for "+tzArg;
-        code = 400;
-    }
-
-    res.writeHead(code, {'Content-Type': 'application/json'});
-    res.end(JSON.stringify(obj));
-}
-
-function startServe(res, now, method, path, params){
-    // start a new session
-    const code = 200;
-    const obj = {
-        currentTime: now.toISOString(),
-        sid: makeSid(params)
-    };
-
-    res.writeHead(code, {'Content-Type': 'application/json'});
-    res.end(JSON.stringify(obj));
-}
-
+/* generic result handlers */
 function notFoundServe(res, now, method, path, params){
     const obj = {
         error: "Not Found",
@@ -90,6 +37,8 @@ function errorServe(res, now, method, path, params){
     res.writeHead(500, {'Content-Type': 'application/json'});
     res.end(JSON.stringify(obj));
 }
+
+const errorHandler = new Handler(always, errorServe);
 
 /* class for making handlers */
 class Handler {
@@ -113,21 +62,18 @@ class Handler {
     }
 }
 
-/* handler instantiation */
-const handlers = [
-    new Handler([update, hasSession], dataServe),
-    new Handler([start], startServe),
-    new Handler([always], notFoundServe)
-];
-
-const errorHandler = new Handler(always, errorServe);
-
 class Serve {
+    handlers;
+    param_keys;
+    constructor(param_keys, handlers){
+        this.param_keys = param_keys;
+        this.handlers = handlers;
+    }
     /* server and handler runner */
     handleRequest(res, now, method, path, params){
         let done = false;
-        for(let i = 0; i < handlers.length; i++){
-          let handle = handlers[i];
+        for(let i = 0; i < this.handlers.length; i++){
+          let handle = this.handlers[i];
           if(handle.elect(method, path, params)){
               handle.handle(res, now, method, path, params); 
               done = true;
@@ -205,7 +151,7 @@ class Serve {
                 key = null;
                 continue;
             }
-            if(param_keys.indexOf(s) !== -1){
+            if(this.param_keys.indexOf(s) !== -1){
                 key = s;
                 params[key] = null;
                 continue;
@@ -219,4 +165,4 @@ class Serve {
 }
 
 
-module.exports = {Serve};
+module.exports = {Serve, makeSid, always, notFoundServe, errorServe};
