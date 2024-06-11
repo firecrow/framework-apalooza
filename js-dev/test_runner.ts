@@ -1,11 +1,13 @@
+import { Literal } from "../js-core/utils";
+
 const TEST_STARTED = 'started';
 const TEST_PASS = 'started';
 const TEST_FAIL = 'started';
 
-const serveTime = require('./serve_time');
-const tzlist = require('./tzlist');
-
-class TestArg {
+class TestServer_Arg {
+    method:String;
+    path:String;
+    params: any;
     constructor(method, path, params){
         this.method = method;
         this.path = path;
@@ -18,6 +20,9 @@ class TestArg {
 }
 
 class TestCase {
+    name: String;
+    arg: any;
+    result: any;
     constructor(name, arg, result){
         this.name = name;
         this.arg = arg;
@@ -28,7 +33,34 @@ class TestCase {
     }
 }
 
-class MockRes {
+class TestSet extends Literal {
+    func: Function;
+    cases: Array<TestCase>;
+    results: {
+        pass: 0
+        fail: 0,
+        total: 0,
+    }
+    constructor(obj){
+        super(obj);
+    }
+    run(){
+        for(let i = 0; i < this.cases.length; i++){
+            const cse = this.cases[i];
+            const res = this.func(cse);
+            if(res == cse.result){
+                this.results.pass++;
+            }else{
+                this.results.fail++;
+            }
+            this.results.total++;
+        }
+    }
+}
+
+class TestServer_MockRes {
+    content: String;
+    code: number;
     constructor(){
         this.content = "";
         this.code = 0;
@@ -41,15 +73,14 @@ class MockRes {
     }
 }
 
-function RunCaseSet(set){
-    const now = new Date();
-    const serve = new serveTime.Serve();
+/*
+function RunCalcSet(set){
     for(let i = 0; i < set.length; i++){
         const test = set[i];
-        const res = new MockRes();
         const arg = set[i].arg;
         const result = set[i].result;
-        const response = serve.handleRequest(res, now, arg.method, arg.path, arg.params);
+
+
 
         if(res.code != result.code){
             throw new Error(`test failure code mismatch: have ${res.code}  expected ${result.code}  for ${test.name} - ${test} - ${res.content}`);
@@ -79,12 +110,9 @@ function RunCaseSet(set){
         console.log(`TEST PASS: ${test.name}`);
     }
 }
+*/
 
-module.exports = {
-    TEST_STARTED,
-    TEST_FAIL,
-    TEST_PASS,
-    RunCaseSet,
+export {
     TestCase,
-    TestArg,
+    TestSet
 };

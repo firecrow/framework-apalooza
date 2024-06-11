@@ -1,28 +1,46 @@
+import { Literal } from "./utils";
+
 type CalcFunc = (value:Projection, idx: number) => number;
 
-export class Launch {
+export class Launch extends Literal {
     qtr: number;
     units: number;
     price: number;
+    constructor(obj){
+        super(obj);
+    }
 }
 
-export class Growth {
+export class Growth extends Literal {
     min: number;
     max: number;
     cycle: number;
+    constructor(obj){
+        super(obj);
+    }
 }
 
-export class Product {
+export class Product extends Literal {
     name:String;
     key:String;
     description: String;
     launch: Launch;
     growth: Growth;
+    constructor(obj){
+        super(obj);
+    }
 }
 
 export class ProductSet {
     idxMap: Map<String, number>;
     products: Array<Product>;
+    constructor(products){
+        if(products){
+            for(let i = 0; i < products.length; i++){
+                this.setProduct(products[i]);
+            }
+        }
+    }
     getByName(key: String): Product {
         return this.products[this.idxMap.get(key) || ""] || null;
     }

@@ -164,5 +164,4 @@ class Serve {
     }
 }
 
-
 module.exports = {Serve, makeSid, always, notFoundServe, errorServe};
