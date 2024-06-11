@@ -1,6 +1,5 @@
 import {TestSet} from './test_runner';
-import {InitStartModel} from '../js-core/data';
-
+import {InitStartModel} from './data';
 
 const calcBasicSet = new TestSet({
     func: () => {

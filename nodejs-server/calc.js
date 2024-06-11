@@ -1,39 +1,37 @@
 import { Literal } from "./utils";
 
-type CalcFunc = (value:Projection, idx: number) => number;
-
 export class Launch extends Literal {
-    qtr: number;
-    units: number;
-    price: number;
+    qtr;
+    units;
+    price;
     constructor(obj){
         super(obj);
     }
 }
 
 export class Growth extends Literal {
-    min: number;
-    max: number;
-    cycle: number;
+    min;
+    max;
+    cycle;
     constructor(obj){
         super(obj);
     }
 }
 
 export class Product extends Literal {
-    name:String;
-    key:String;
-    description: String;
-    launch: Launch;
-    growth: Growth;
+    name;
+    key;
+    description;
+    launch;
+    growth;
     constructor(obj){
         super(obj);
     }
 }
 
 export class ProductSet {
-    idxMap: Map<String, number>;
-    products: Array<Product>;
+    idxMap;
+    products;
     constructor(products){
         if(products){
             for(let i = 0; i < products.length; i++){
@@ -41,37 +39,36 @@ export class ProductSet {
             }
         }
     }
-    getByName(key: String): Product {
+    getByName(key) {
         return this.products[this.idxMap.get(key) || ""] || null;
     }
-    setProduct(prod: Product){
+    setProduct(prod){
         this.idxMap.set(prod.key, this.products.push(prod));
     }
 }
 
 export class Projection {
-    startQrtr:number;
-    prod: Product;
-    length: number;
+    startQrtr;
+    prod;
+    length;
 
     // rows
-    prices:Array<number>;
-    growth:Array<number>;
-    units:Array<number>;
-    totals:Array<number>;
-    grandTotals:Array<number>;
-
-    constructor(prod:Product){
+    prices;
+    growth;
+    units;
+    totals;
+    grandTotals;
+    constructor(prod){
         this.prod = prod;
     }
 
-    calcInput(start:number, end:number, callback:CalcFunc): Array<number> {
+    calcInput(start, end, callback) {
         const length = end - start;
         const row = new Array(length);
         return row.map((_, idx) => callback(this, idx));
     }
 
-    mapInput(start:number, end:number, callback:CalcFunc): Array<number> {
+    mapInput(start, end, callback) {
         const length = end - start;
         const row = new Array(length);
         for(let i = 0; i < length; i++){
@@ -88,7 +85,7 @@ export function blankData(){
     }
 }
 
-function GetInPhase(growth: Growth, idx: number): number{
+function GetInPhase(growth, idx){
     const cycle = growth.cycle; 
     const min = growth.min;
     const max = growth.max;
@@ -103,23 +100,23 @@ function GetInPhase(growth: Growth, idx: number): number{
     }
 }
 
-function prependProductName(name: String, label: String, arr: Array<any>): Array<any> {
-    const row = arr as Array<any>;
+function prependProductName(name, label, arr) {
+    const row = arr;
     row.unshift(name, label);
     return row;
 }
 
 export class DataSet {
-    headers: Array<any>;
-    rows:  Array<Array<any>>;
+    headers;
+    rows;
 }
 
 export class Model {
-    start: number;
-    end: number;
-    prodSet: ProductSet;
+    start;
+    end;
+    prodSet;
     getData(){
-        const data: DataSet =  new DataSet();
+        const data =  new DataSet();
 
         const length = this.end - this.start;
         let headers = (new Array(length)).map((_, idx) =>  'Qrtr' + idx);
@@ -128,7 +125,7 @@ export class Model {
         for(let i = 0; i < this.prodSet.products.length; i++){
             const prod = this.prodSet.products[i];
             const projection = new Projection(prod);
-            const prices: Array<number> = projection.calcInput(this.start, this.end, (projection, _) => {
+            const prices = projection.calcInput(this.start, this.end, (projection, _) => {
                 return projection.prod.launch.price;
             });
 

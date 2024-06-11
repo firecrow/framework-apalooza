@@ -1,13 +1,13 @@
-import { Literal } from "../js-core/utils";
+import { Literal } from "./utils";
 
 const TEST_STARTED = 'started';
 const TEST_PASS = 'started';
 const TEST_FAIL = 'started';
 
 class TestServer_Arg {
-    method:String;
-    path:String;
-    params: any;
+    method;
+    path;
+    params;
     constructor(method, path, params){
         this.method = method;
         this.path = path;
@@ -20,9 +20,9 @@ class TestServer_Arg {
 }
 
 class TestCase {
-    name: String;
-    arg: any;
-    result: any;
+    name;
+    arg;
+    result;
     constructor(name, arg, result){
         this.name = name;
         this.arg = arg;
@@ -34,15 +34,16 @@ class TestCase {
 }
 
 class TestSet extends Literal {
-    func: Function;
-    cases: Array<TestCase>;
-    results: {
-        pass: 0
-        fail: 0,
-        total: 0,
-    }
+    func;
+    cases;
+    results
     constructor(obj){
         super(obj);
+        this.results = {
+            pass: 0,
+            fail: 0,
+            total: 0,
+        }
     }
     run(){
         for(let i = 0; i < this.cases.length; i++){
@@ -59,8 +60,8 @@ class TestSet extends Literal {
 }
 
 class TestServer_MockRes {
-    content: String;
-    code: number;
+    content;
+    code;
     constructor(){
         this.content = "";
         this.code = 0;
