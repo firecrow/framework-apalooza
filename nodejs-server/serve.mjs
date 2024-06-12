@@ -1,5 +1,4 @@
-const http = require('http');
-const fs = require('fs');
+import http from 'http'
 
 /* util functions */
 function makeSid(params){
@@ -14,6 +13,14 @@ function makeSid(params){
 
    const buff = Buffer.from(`${now_abbrev}${ts_abbrev}${rand}`);
    return buff.toString('base64');
+}
+
+function ErrorLog(msg, params){
+    console.log(msg, params);
+}
+
+function AccessLog(msg, params){
+    console.log(msg, params);
 }
 
 /* generic election functions */
@@ -38,7 +45,6 @@ function errorServe(res, now, method, path, params){
     res.end(JSON.stringify(obj));
 }
 
-const errorHandler = new Handler(always, errorServe);
 
 /* class for making handlers */
 class Handler {
@@ -72,17 +78,27 @@ class Serve {
     /* server and handler runner */
     handleRequest(res, now, method, path, params){
         let done = false;
+        let elected = null;
         for(let i = 0; i < this.handlers.length; i++){
           let handle = this.handlers[i];
           if(handle.elect(method, path, params)){
-              handle.handle(res, now, method, path, params); 
-              done = true;
+              elected = handle.process;
               break;
           }
         }
+
+        if(elected){
+            if(elected.call(elected, res, now, method, path, params) !== false){
+                done = true;
+            }
+        }else{
+            errorHandler.handle(res, now, method, path, params);
+        }
         
         if(!done){
-            errorHandler.handle(res, now, method, path, params);
+            ErrorLog(`Error ${method} ${path} -> ${elected.name}`, params);
+        }else{
+            AccessLog(`Served ${method} ${path} -> ${elected.name}`, params);
         }
     }
     getNow(){
@@ -164,4 +180,6 @@ class Serve {
     }
 }
 
-module.exports = {Serve, makeSid, always, notFoundServe, errorServe};
+const errorHandler = new Handler(always, errorServe);
+
+export {Serve, Handler, makeSid, always, notFoundServe, errorServe};

@@ -1,9 +1,12 @@
-const server = require('./server.js');
+import {Serve, Handler, always, notFoundServe, makeSid} from './serve.mjs';
+import { InitStartModel } from './data.mjs';
 
-UPDATE_KEYWORD = 'update';
-START_KEYWORD = 'start';
-SID_KEYWORD = 'session';
+const UPDATE_KEYWORD = 'update';
+const START_KEYWORD = 'start';
+const SID_KEYWORD = 'session';
 const param_keys = [SID_KEYWORD];
+
+const modelDefaults = {start: 0, end: 11}
 
 /* election functions */
 function update(method, path, params){
@@ -38,6 +41,9 @@ function startServe(res, now, method, path, params){
         sid: makeSid(params)
     };
 
+    const model = InitStartModel(modelDefaults);
+    obj.data = model.getData();
+
     // get default data here
 
     res.writeHead(code, {'Content-Type': 'application/json'});
@@ -48,9 +54,9 @@ function startServe(res, now, method, path, params){
 const handlers = [
     new Handler([start], startServe),
     new Handler([update, hasSession], dataServe),
-    new Handler([server.always], server.notFoundServe)
+    new Handler([always], notFoundServe)
 ];
 
 export function DataServer_Make(){
-    return server.Serve(param_keys, handlers);
+    return new Serve(param_keys, handlers);
 }

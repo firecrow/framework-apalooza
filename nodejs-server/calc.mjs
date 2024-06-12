@@ -149,7 +149,6 @@ export class Model {
 
         const length = this.end - this.start;
         let headers = Array.apply(null, Array(length)).map((_, idx) =>  'Qrtr' + (idx+this.start));
-        console.log(headers);
 
         data.headers = prependProductName("", "", headers);
 
@@ -185,7 +184,6 @@ export class Model {
                 "totals": true,
                 "grandTotals": true,
             }){
-                console.log(k, projection[k]);
                 data.rows.push(prependProductName(prod.name, k, projection[k]));
             }
         }
