@@ -1,8 +1,8 @@
 import {Model, Growth, Launch, Product, ProductSet} from "./calc.mjs";
 
 /* util functions */
-function InitStartModel(){
-    const model = new Model();
+function InitStartModel(obj){
+    const model = new Model(obj);
     model.prodSet = new ProductSet([
         new Product({
             name: "Alpha",

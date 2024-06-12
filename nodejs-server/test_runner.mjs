@@ -1,6 +1,39 @@
+import { CompareFuzz } from "./utils.mjs";
+
 const TEST_STARTED = 'started';
 const TEST_PASS = 'started';
 const TEST_FAIL = 'started';
+
+export function DeepCompare(a, b, fuzz, nested){
+    nested = nested || [];
+    let r = false;
+    if(Array.isArray(a)){
+        for(let i = 0; i < a.length; i++){
+            nested.push(i);
+            r = DeepCompare(a[i], b[i], fuzz, nested);
+            if(!r){
+                return nested;
+            }
+            nested.pop();
+        }
+    }else if(typeof a === 'object') {
+        for(let k in a){
+            nested.push(k);
+            r = DeepCompare(a[k], b[k], fuzz, nested);
+            if(!r){
+                return nested;
+            }
+            nested.pop();
+        }
+    }else{
+        r = CompareFuzz(a, b, fuzz);
+        if(!r){
+            return nested;
+        }
+    }
+
+    return true;
+}
 
 class TestServer_Arg {
     method;
@@ -45,7 +78,6 @@ class TestSet {
         }
     }
     run(){
-        console.log('run\n', this);
         for(let i = 0; i < this.cases.length; i++){
             const cse = this.cases[i];
             const res = this.func(cse);

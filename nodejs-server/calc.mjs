@@ -1,3 +1,4 @@
+import { ValidNum } from "./utils.mjs";
 
 export class Launch {
     qtr;
@@ -40,6 +41,8 @@ export class ProductSet {
     idxMap;
     products;
     constructor(products){
+        this.idxMap = new Map();
+        this.products = [];
         if(products){
             for(let i = 0; i < products.length; i++){
                 this.setProduct(products[i]);
@@ -71,7 +74,7 @@ export class Projection {
 
     calcInput(start, end, callback) {
         const length = end - start;
-        const row = new Array(length);
+        const row = Array.apply(null, Array(length));
         return row.map((_, idx) => callback(this, idx));
     }
 
@@ -108,36 +111,58 @@ function GetInPhase(growth, idx){
 }
 
 function prependProductName(name, label, arr) {
-    const row = arr;
-    row.unshift(name, label);
-    return row;
+    arr.unshift(name, label);
+    return arr;
 }
 
 export class DataSet {
     headers;
     rows;
+    constructor(obj){
+        if(obj){
+            this.headers = obj.headers || [];
+            this.rows = obj.rows || [];
+        }else{
+            this.headers = [];
+            this.rows = [];
+        }
+    }
 }
 
 export class Model {
     start;
     end;
     prodSet;
+    constructor(obj){
+        if(obj){
+            this.start = obj.start;
+            this.end = obj.end;
+        }
+    }
     getData(){
-        const data =  new DataSet();
+        if(!ValidNum(this.start) || !ValidNum(this.end)){
+            return null;
+        }
+
+        const data = new DataSet();
+        const model = this;
 
         const length = this.end - this.start;
-        let headers = (new Array(length)).map((_, idx) =>  'Qrtr' + idx);
+        let headers = Array.apply(null, Array(length)).map((_, idx) =>  'Qrtr' + (idx+this.start));
+        console.log(headers);
+
         data.headers = prependProductName("", "", headers);
 
         for(let i = 0; i < this.prodSet.products.length; i++){
             const prod = this.prodSet.products[i];
             const projection = new Projection(prod);
-            const prices = projection.calcInput(this.start, this.end, (projection, _) => {
+            projection.prices = projection.calcInput(this.start, this.end, (projection, _) => {
                 return projection.prod.launch.price;
             });
 
             projection.growth = projection.calcInput(this.start, this.end, (projection, idx) => {
                 const growth = projection.prod.growth;
+                idx += model.start;
                 return GetInPhase(growth, idx);
             });
 
@@ -149,7 +174,7 @@ export class Model {
                 return projection.units[idx] * projection.prod.launch.price;
             });
 
-            projection.grandTotals = projection.calcInput(this.start, this.end, (projection, idx) => {
+            projection.grandTotals = projection.mapInput(this.start, this.end, (projection, idx) => {
                 return projection.totals[idx];
             });
 
@@ -160,6 +185,7 @@ export class Model {
                 "totals": true,
                 "grandTotals": true,
             }){
+                console.log(k, projection[k]);
                 data.rows.push(prependProductName(prod.name, k, projection[k]));
             }
         }
