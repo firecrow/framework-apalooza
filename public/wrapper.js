@@ -96,6 +96,40 @@
         }
       }
 
+      class Fwp  {
+         constructor(baseUrl){
+             this.baseUrl = baseUrl;
+             this.listeners =  {};
+             this.cached = null;
+         }
+         makeUrl(path) {
+            return `${this.baseUrl}${path}`;
+         }
+         register(name, func) {
+            this.listeners[name] = func; 
+            if(this.cached){
+                func(this.cached);
+            }
+         }
+         fetch(url) {
+            const fullUrl = this.makeUrl(url);
+            fetch(fullUrl, {
+                method: 'get'
+            }).then(resp => {
+                if(resp.status === 200){
+                    resp.json().then(json => { 
+                        for(let k in this.listeners){
+                            this.listeners[k](json);
+                        }
+                        this.cached = json;
+                    });
+                }else{
+                    console.error(`Error fetching '${fullUrl}'`, resp);
+                }
+            });
+         }
+      }
+
       window.addEventListener("load", function(){
           const li_arr = document.querySelectorAll('nav ul li');
           for(let i = 0; i < li_arr.length; i++){
@@ -106,5 +140,9 @@
                 }
               })(li_arr[i]);
           }
+          const Fwp = new Fwp(`${window.location.href}/api/`);
+          Fwp.register('debug', resp => { console.log('Debug Response', resp) });
+          Fwp.fetch('start');
+          window.Fwp = Fwp;
       });
   })();
