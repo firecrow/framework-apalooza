@@ -71,7 +71,9 @@ class Handler {
 class Serve {
     handlers;
     param_keys;
+    host;
     constructor(param_keys, handlers){
+        this.host = "";
         this.param_keys = param_keys;
         this.handlers = handlers;
     }
@@ -88,11 +90,11 @@ class Serve {
         }
 
         if(elected){
-            if(elected.call(elected, res, now, method, path, params) !== false){
+            if(elected.call(this, res, now, method, path, params) !== false){
                 done = true;
             }
         }else{
-            errorHandler.handle(res, now, method, path, params);
+            errorHandler.handle.call(this, res, now, method, path, params);
         }
         
         if(!done){
@@ -104,8 +106,9 @@ class Serve {
     getNow(){
         return new Date();
     }
-    serve(port){
+    serve(port, host){
         /* server instantiation */
+        this.host = host;
         const self = this;
         http.createServer(function (req, res) {
             const method = req.method;

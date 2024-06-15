@@ -8,6 +8,24 @@ const param_keys = [SID_KEYWORD];
 
 const modelDefaults = {start: 0, end: 11}
 
+/* util function */
+function setCookie(headers, name, value){
+    if(!('Set-Cookie' in headers)){
+        headers['Set-Cookie'] = '';
+    }else{
+
+        headers['Set-Cookie'] += ' ';
+    }
+    headers['Set-Cookie'] += `${name}=${value};`;
+}
+
+function sealHeaders(headers){
+    if('Set-Cookie' in headers){
+        headers['Set-Cookie'] += ` Max-Age=2592000; Domain=${this.host}; SameSite=Strict`
+    }
+    return headers;
+}
+
 /* election functions */
 function update(method, path, params){
     return method === "POST" && UPDATE_KEYWORD in params;
@@ -36,9 +54,9 @@ function dataServe(res, now, method, path, params){
 function startServe(res, now, method, path, params){
     // start a new session
     const code = 200;
+    const sid = makeSid(params);
     const obj = {
         currentTime: now.toISOString(),
-        sid: makeSid(params)
     };
 
     const model = InitStartModel(modelDefaults);
@@ -46,7 +64,9 @@ function startServe(res, now, method, path, params){
 
     // get default data here
 
-    res.writeHead(code, {'Content-Type': 'application/json'});
+    const headers = {'Content-Type': 'application/json'};
+    setCookie(headers, 'sid', sid);
+    res.writeHead(code, sealHeaders.call(this, headers));
     res.end(JSON.stringify(obj));
 }
 

@@ -140,9 +140,9 @@
                 }
               })(li_arr[i]);
           }
-          const Fwp = new Fwp(`${window.location.href}/api/`);
-          Fwp.register('debug', resp => { console.log('Debug Response', resp) });
-          Fwp.fetch('start');
-          window.Fwp = Fwp;
+          const fwp = new Fwp(`${window.location.href}/api/`);
+          fwp.register('debug', resp => { console.log('Debug Response', resp) });
+          fwp.fetch('start');
+          window.Fwp = fwp;
       });
   })();
