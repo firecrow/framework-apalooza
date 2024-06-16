@@ -1,4 +1,4 @@
-import { ValidNum } from "./utils.mjs";
+import { ValidNum, FormatData } from "./utils.mjs";
 
 export class Launch {
     qtr;
@@ -28,12 +28,14 @@ export class Product {
     description;
     launch;
     growth;
+    idx;
     constructor(obj){
         this.name = obj.name;
         this.key = obj.key;
         this.description = obj.description;
         this.launch = obj.launch;
         this.growth = obj.growth;
+        this.idx = 0;
     }
 }
 
@@ -53,7 +55,9 @@ export class ProductSet {
         return this.products[this.idxMap.get(key) || ""] || null;
     }
     setProduct(prod){
-        this.idxMap.set(prod.key, this.products.push(prod));
+        const idx = this.products.push(prod);
+        this.idxMap.set(prod.key, idx);
+        prod.idx = idx;
     }
 }
 
@@ -118,10 +122,12 @@ function prependProductName(name, label, arr) {
 export class DataSet {
     headers;
     rows;
+    products;
     constructor(obj){
         if(obj){
             this.headers = obj.headers || [];
             this.rows = obj.rows || [];
+            this.products = null;
         }else{
             this.headers = [];
             this.rows = [];
@@ -145,6 +151,7 @@ export class Model {
         }
 
         const data = new DataSet();
+        data.products = this.prodSet.products;
         const model = this;
 
         const length = this.end - this.start;
@@ -188,6 +195,6 @@ export class Model {
             }
         }
 
-        return data;
+        return FormatData(data);
     }
 }

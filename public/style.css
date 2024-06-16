@@ -16,7 +16,12 @@ table.data-points {
 
 table.data-points th ,
 table.data-points td {
-    padding: 4px 6px;
+    padding: 4px 12px;
+    text-align: right;
+}
+
+table.data-points td:nth-child(1) {
+    font-weight: bold;
 }
 
 table.data-points tr:nth-child(odd) {

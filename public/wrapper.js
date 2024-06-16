@@ -108,6 +108,7 @@
          register(name, func) {
             this.listeners[name] = func; 
             if(this.cached){
+                console.log('calling cached value');
                 func(this.cached);
             }
          }
