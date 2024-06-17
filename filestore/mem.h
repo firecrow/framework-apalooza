@@ -8,7 +8,10 @@ typedef struct mem_slab {
 
 typedef struct mem_ctx {
     MemSlab *start_sl;
+    void *instance;
 } MemCtx;
+
+#define MemCtx_Bind(m, inst) do { inst->m = m; m->instance = (void *)inst;} while(0);
 
 size_t MemCount();
 void *MemCtx_Alloc(MemCtx *m, size_t s);

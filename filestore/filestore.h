@@ -1,6 +1,7 @@
 #define STRING_CHUNK_SIZE 1024
 
 typedef unsigned char uchar;
+typedef uchar boolean;
 typedef uint64_t i64;
 typedef int status;
 typedef int type;
@@ -10,9 +11,14 @@ struct serve_req;
 struct mem_ctx;
 struct mem_slab;
 
+#define TRUE 1
+#define FALSE 0
+
 enum types {
     TYPE_MEMCTX,
     TYPE_MEMSLAB,
+    TYPE_REQ,
+    TYPE_SERVECTX,
 };
 
 enum methods {
@@ -26,6 +32,7 @@ enum status_types {
     READY = 0,
     SUCCESS,
     ERROR,
+    NOOP,
     INCOMING,
     PROCESSING,
     RESPONDING,
@@ -33,24 +40,8 @@ enum status_types {
 
 #define COMPLETE SUCCESS
 
-#include <error.h>
-#include <mem.h>
-#include <req.h>
-
-typedef struct serve_ctx {
-    int epoll_fd;
-} ServeCtx;
-
-ServeCtx *ServeCtx_Make();
-ServeCtx *ServeCtx_Serve(int port);
-
-typedef struct string {
-    char *content;
-    i64 length;
-    i64 allocated;
-    struct string *next;
-} String;
-
-String *String_Make(uchar *content);
-status String_Add(String *a, String *additional);
-i64 String_Length(String *s);
+#include "error.h"
+#include "mem.h"
+#include "string.h"
+#include "serve.h"
+#include "req.h"

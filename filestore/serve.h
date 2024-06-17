@@ -1,0 +1,15 @@
+#define ACCEPT_CADANCE 6;
+#define SERV_MAX_EVENTS 1024
+#define SERV_READ_SIZE 512
+#define EPOLL_WAIT 100
+
+typedef struct serve_ctx {
+    int epoll_fd;
+    int socket_fd;
+    int port;
+    boolean serving;
+    MemCtx *m;
+} Serve;
+
+Serve *Serve_Make(MemCtx *m);
+status Serve_Run(Serve *sctx, int port);
