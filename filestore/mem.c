@@ -84,7 +84,6 @@ size_t MemSlab_Available(MemSlab *sl){
 }
 
 void *MemSlab_Alloc(MemSlab *sl, size_t s){
-    printf("available %lu requesting %lu\n", MemSlab_Available(sl), s);
     if((MemSlab_Available(sl) - s) < 0){
         Fatal("Trying to allocation (slab) too much memory at once", TYPE_MEMSLAB);
     }

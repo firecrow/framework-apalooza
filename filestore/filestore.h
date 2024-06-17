@@ -15,13 +15,27 @@ enum types {
     TYPE_MEMSLAB,
 };
 
-enum status_types {
-    SUCCESS = 0,
-    ERROR = 1
+enum methods {
+    METHOD_GET,
+    METHOD_SET,
+    METHOD_UPDATE,
+    METHOD_DELETE,
 };
+
+enum status_types {
+    READY = 0,
+    SUCCESS,
+    ERROR,
+    INCOMING,
+    PROCESSING,
+    RESPONDING,
+};
+
+#define COMPLETE SUCCESS
 
 #include <error.h>
 #include <mem.h>
+#include <req.h>
 
 typedef struct serve_ctx {
     int epoll_fd;
@@ -40,10 +54,3 @@ typedef struct string {
 String *String_Make(uchar *content);
 status String_Add(String *a, String *additional);
 i64 String_Length(String *s);
-
-typedef struct serve_req {
-    String *path;
-    String *content;
-    String *response;
-    i64 out_position;
-} ServeReq;
