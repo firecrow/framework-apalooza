@@ -7,7 +7,7 @@ typedef struct serve_req {
     String *id;
     String *body;
     String *response;
-    i64 out_position;
+    SCursor *cursor;
 } Req;
 
 Req *Req_Make();

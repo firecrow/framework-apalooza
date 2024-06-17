@@ -58,7 +58,8 @@ status Serve_EpollEvAdd(Serve *sctx, Req *req, int fd, int direction){
     return SUCCESS;
 }
 
-status Serve_EpollEvRemove(Serve *sctx, Req*req){
+status Serve_EpollEvRemove(Serve *sctx, Req* req){
+    printf("Removing %d\n", req->fd);
     int r = epoll_ctl(sctx->epoll_fd, EPOLL_CTL_DEL, req->fd, NULL);
     if(r != 0){
         Error("Failed to remove file descriptor to epoll");
@@ -69,6 +70,7 @@ status Serve_EpollEvRemove(Serve *sctx, Req*req){
 }
 
 status Serve_CloseReq(Serve *sctx, Req *req){
+    printf("Closing %d\n", req->fd);
     status r = Serve_EpollEvRemove(sctx, req);
     if(r == SUCCESS){
         close(req->fd);
@@ -97,6 +99,20 @@ status Serve_AcceptRound(Serve *sctx){
     return NOOP;
 }
 
+status Serve_Respond(Serve *sctx, Req *req){
+    if(req->cursor->position < req->response->length){
+        size_t l = write(req->fd, Req_RespGet(req), Req_RespLen(req));
+        status r = Cursor_Incr(req->cursor, l);
+        if(r == COMPLETE){
+            req->state = COMPLETE;
+        }
+    }
+
+    if(req->cursor->position >= req->response->length){
+        req->state = COMPLETE;
+    }
+}
+
 status Serve_ServeRound(Serve *sctx){
     status r = ERROR;
     int ev_count;
@@ -110,6 +126,7 @@ status Serve_ServeRound(Serve *sctx){
         return NOOP;
     }
 
+    printf("EVCount %d\n", ev_count);
     for(int i = 0; i < ev_count; i++){
         Req *req = (Req *)events[i].data.ptr;
         if(req == NULL){
@@ -121,10 +138,13 @@ status Serve_ServeRound(Serve *sctx){
             Req_SetError(sctx, req, NULL);
         }
 
-        if(req->state == SUCCESS){
+        if(req->state == COMPLETE){
+            printf("Complete %d\n", req->fd);
             r = Serve_CloseReq(sctx, req);
+        if(req->state == RESPONDING){
+            Serve_Respond(sctx, req);
         }else{
-            printf("Handle query %d", req->fd);
+            Req_Handle(req);
         }
     }
 

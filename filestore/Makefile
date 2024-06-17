@@ -4,7 +4,7 @@ INC = -I/usr/local/musl/include/ -I./
 
 obj = filestore.o req.o serve.o mem.o string.o error.o
 
-all: filedb
+all: filestore
 
 clean:
 	rm -Rf build/*
@@ -12,8 +12,8 @@ clean:
 libbasic.a: 
 	cd /mnt/basic/basictypes && make
 
-filedb: dirs $(obj)
-	$(CC) $(CFLAGS) $(INC) $(LIBS) -o build/filedb main.c $(addprefix build/, $(obj))
+filestore: dirs $(obj)
+	$(CC) $(CFLAGS) $(INC) $(LIBS) -o build/filestore main.c $(addprefix build/, $(obj))
 
 dirs:
 	mkdir -p build
