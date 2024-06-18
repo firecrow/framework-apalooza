@@ -2,7 +2,7 @@ CC = /usr/bin/clang
 CFLAGS = --target=x86_64-unknown-linux-musl -g -Werror
 INC = -I/usr/local/musl/include/ -I./ 
 
-obj = filestore.o req.o serve.o mem.o string.o error.o
+obj = filestore.o scursor.o req.o serve.o mem.o string.o error.o
 
 all: filestore
 

@@ -100,9 +100,10 @@ status Serve_AcceptRound(Serve *sctx){
 }
 
 status Serve_Respond(Serve *sctx, Req *req){
-    if(req->cursor->position < req->response->length){
-        size_t l = write(req->fd, Req_RespGet(req), Req_RespLen(req));
-        status r = Cursor_Incr(req->cursor, l);
+    if(req->cursor->state != COMPLETE){
+        SCursor_Prepare(req->cursor, SERV_WRITE_SIZE); 
+        size_t l = write(req->fd, req->cursor->seg->bytes, req->cursor->immidiateLength);
+        status r = SCursor_Incr(req->cursor, l);
         if(r == COMPLETE){
             req->state = COMPLETE;
         }
@@ -111,6 +112,8 @@ status Serve_Respond(Serve *sctx, Req *req){
     if(req->cursor->position >= req->response->length){
         req->state = COMPLETE;
     }
+
+    return SUCCESS;
 }
 
 status Serve_ServeRound(Serve *sctx){
@@ -141,10 +144,12 @@ status Serve_ServeRound(Serve *sctx){
         if(req->state == COMPLETE){
             printf("Complete %d\n", req->fd);
             r = Serve_CloseReq(sctx, req);
+        }
+
         if(req->state == RESPONDING){
             Serve_Respond(sctx, req);
         }else{
-            Req_Handle(req);
+            Req_Handle(sctx, req);
         }
     }
 

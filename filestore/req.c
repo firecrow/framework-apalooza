@@ -9,35 +9,41 @@ i64 Req_Parse(Serve *sctx, Req *req, String *s){
 
 status Req_Recv(Serve *sctx, Req *req){
     uchar buff[SERV_READ_SIZE];
-    size_t l = recv(rec->fd, buff, SERV_READ_SIZE, 0);
+    size_t l = recv(req->fd, buff, SERV_READ_SIZE, 0);
     if(l > 0){
         return Req_Parse(sctx, req, String_Make(req->m, buff));
     }
+
+    return NOOP;
 }
 
 status Req_Process(Serve *sctx, Req *req){
-    req->response = String("response");
-    req->status = RESPONDING;
+    req->response = String_Make(req->m, (uchar *)"response");
+    req->state = RESPONDING;
+
+    return SUCCESS;
 }
 
 status Req_Handle(Serve *sctx, Req *req){
     printf("Handle query %d", req->fd);
     fflush(stdout);
-    if(state == READY){
-        state = INCOMING;
+    if(req->state == READY){
+        req->state = INCOMING;
     }
 
-    if(state == INCOMING){
+    if(req->state == INCOMING){
         return Req_Recv(sctx, req);
     }
 
-    if(state == PROCESSING){
-
+    if(req->state == PROCESSING){
+        Req_Process(sctx, req);
     }
 
-    if(state == RESPONDING){
-
+    if(req->state == RESPONDING){
+        /* handle in Serve */
     }
+
+    return SUCCESS;
 }
 
 Req *Req_Make(){

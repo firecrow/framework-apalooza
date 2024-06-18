@@ -43,5 +43,6 @@ enum status_types {
 #include "error.h"
 #include "mem.h"
 #include "string.h"
+#include "scursor.h"
 #include "serve.h"
 #include "req.h"
