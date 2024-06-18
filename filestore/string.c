@@ -12,13 +12,19 @@ String *String_Make(MemCtx *m, uchar *bytes){
     return s;
 }
 
+String *String_From(MemCtx *m, char *cstr){
+    return String_Make(m, (uchar *)cstr);
+}
+
 
 status String_Add(MemCtx *m, String *a, uchar *bytes) {
     size_t l = strlen((char *)bytes);
     size_t remaining = l;
     size_t copy_l = remaining;
 
-    String *seg = a, *tail = NULL;
+    String *seg = a;
+    String *tail = seg;
+    uchar *p = bytes;
     while(a->next != NULL){
         seg = a->next;
     }
@@ -30,16 +36,19 @@ status String_Add(MemCtx *m, String *a, uchar *bytes) {
 
     if(seg->bytes == NULL){
         seg->bytes = (uchar *)MemCtx_Alloc(m, copy_l+1);
-        memcpy(seg->bytes, bytes, copy_l);
+        memcpy(seg->bytes, p, copy_l);
+        seg->length = copy_l;
         remaining -= copy_l;
+        p += copy_l;
     }
 
     /* if more than a string seg remains, make a new one */
     while(remaining > STRING_CHUNK_SIZE){
         String *next = string_Init(m);
         next->bytes = (uchar *)MemCtx_Alloc(m, STRING_CHUNK_SIZE+1);
-        memcpy(next->bytes, bytes, STRING_CHUNK_SIZE);
-        bytes += STRING_CHUNK_SIZE;
+        memcpy(next->bytes, p, STRING_CHUNK_SIZE);
+        next->length = STRING_CHUNK_SIZE;
+        p += STRING_CHUNK_SIZE;
 
         if(seg == NULL){
             seg = tail = next;
@@ -54,8 +63,8 @@ status String_Add(MemCtx *m, String *a, uchar *bytes) {
     if(remaining > 0){
         String *next = string_Init(m);
         next->bytes = (uchar *)MemCtx_Alloc(m, remaining+1);
-        memcpy(next->bytes, bytes, remaining);
-
+        memcpy(next->bytes, p, remaining);
+        next->length = remaining;
 
         if(seg == NULL){
             seg = tail = next;
@@ -71,9 +80,59 @@ status String_Add(MemCtx *m, String *a, uchar *bytes) {
 i64 String_Length(String *s) {
     String *tail = s;
     i64 length = 0;
+    int i = 0;
     while(tail != NULL){
         length += tail->length; 
-        tail = s->next;
+        tail = tail->next;
+        i++;
     }
     return length;
+}
+
+status String_EqualsCStr(String *a, char *cstr){
+    int l = strlen(cstr); 
+    int pos = 0;
+    if(String_Length(a) != l){
+        return FALSE;
+    }
+    String *tail = a;
+    char *p = cstr;
+    while(tail != NULL && (pos+tail->length) <= l){
+        if(strncmp((char *)tail->bytes, p, tail->length) != 0){
+            return FALSE;
+        }
+        p += tail->length;
+        pos += tail->length;
+        tail = tail->next;
+    }
+
+    if(tail == NULL && pos == l){
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+status String_Equals(String *a, String *b){
+    if(String_Length(a) != String_Length(b)){
+        return FALSE;
+    }
+    String *aTail = a;
+    String *bTail = b;
+    while(aTail != NULL && bTail != NULL){
+        if(aTail->length != bTail->length){
+            return FALSE;
+        }
+        if(strncmp((char *)aTail->bytes, (char *)bTail->bytes, aTail->length) != 0){
+            return FALSE;
+        }
+        aTail = aTail->next;
+        bTail = bTail->next;
+    }
+
+    if(aTail == NULL && bTail == NULL){
+        return TRUE;
+    }
+
+    return FALSE;
 }

@@ -2,7 +2,7 @@ CC = /usr/bin/clang
 CFLAGS = --target=x86_64-unknown-linux-musl -g -Werror
 INC = -I/usr/local/musl/include/ -I./ 
 
-obj = filestore.o scursor.o req.o serve.o mem.o string.o error.o
+obj = filestore.o scursor.o req.o serve.o mem.o string.o error.o testsuite.o tests/string_tests.o
 
 all: filestore
 
@@ -17,6 +17,7 @@ filestore: dirs $(obj)
 
 dirs:
 	mkdir -p build
+	mkdir -p build/tests
 
 $(obj): %.o:%.c 
 	$(CC) -c $(CFLAGS) $(INC) $< -o build/$@

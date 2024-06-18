@@ -1,5 +1,3 @@
-#define STRING_CHUNK_SIZE 1024
-
 typedef unsigned char uchar;
 typedef uchar boolean;
 typedef uint64_t i64;
@@ -19,6 +17,7 @@ enum types {
     TYPE_MEMSLAB,
     TYPE_REQ,
     TYPE_SERVECTX,
+    TYPE_TESTSUITE,
 };
 
 enum methods {
@@ -39,6 +38,7 @@ enum status_types {
 };
 
 #define COMPLETE SUCCESS
+#define TEST_OK READY
 
 #include "error.h"
 #include "mem.h"
