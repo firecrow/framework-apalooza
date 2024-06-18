@@ -15,6 +15,7 @@ typedef struct mem_ctx {
 
 size_t MemCount();
 void *MemCtx_Alloc(MemCtx *m, size_t s);
+void *MemCtx_Realloc(MemCtx *m, size_t s, void *orig, size_t origsize);
 MemCtx *MemCtx_Make();
 status MemCtx_Free(MemCtx *m);
 void *MemSlab_GetStart(MemSlab *sl);

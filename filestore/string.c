@@ -1,13 +1,36 @@
 #include "external.h"
 #include "filestore.h"
+static const char *digits = "0123456789";
 
 static String *string_Init(MemCtx *m){
     return (String *)MemCtx_Alloc(m, sizeof(String));
 }
 
+String *String_FromInt(MemCtx *m, int i){
+    char buff[MAX_BASE10+1];
+    memset(buff, 0, MAX_BASE10+1);
+
+    i64 n = 0;
+    i64 base = 10;
+    int pows = 0;
+    int position = MAX_BASE10-1;
+    int val;
+    char digit = digits[0];
+    while(i > 0){
+        val = i % base;
+        digit = digits[val];
+        buff[position] = digit;
+        i -= val;
+        i /= 10;
+        position--;
+    }
+
+    return String_From(m, buff+position+1); 
+}
+
 String *String_Make(MemCtx *m, uchar *bytes){
     String *s = string_Init(m); 
-    String_Add(m, s, bytes);
+    String_AddCstr(m, s, (char *)bytes, strlen((char *)bytes));
 
     return s;
 }
@@ -16,17 +39,22 @@ String *String_From(MemCtx *m, char *cstr){
     return String_Make(m, (uchar *)cstr);
 }
 
+status String_Add(MemCtx *m, String *a, String *b) {
+    return String_AddCstr(m, a, (char *)b->bytes, b->length);
+}
 
-status String_Add(MemCtx *m, String *a, uchar *bytes) {
-    size_t l = strlen((char *)bytes);
+status String_AddCstr(MemCtx *m, String *a, char *chars, int length) {
+    size_t l = length;
     size_t remaining = l;
     size_t copy_l = remaining;
+    uchar *bytes = (uchar *)chars;
 
     String *seg = a;
     String *tail = seg;
     uchar *p = bytes;
-    while(a->next != NULL){
-        seg = a->next;
+
+    while(seg->next != NULL){
+        seg = seg->next;
     }
 
     /* copy the initial chunk */
@@ -38,6 +66,12 @@ status String_Add(MemCtx *m, String *a, uchar *bytes) {
         seg->bytes = (uchar *)MemCtx_Alloc(m, copy_l+1);
         memcpy(seg->bytes, p, copy_l);
         seg->length = copy_l;
+        remaining -= copy_l;
+        p += copy_l;
+    }else if(seg->length < STRING_CHUNK_SIZE){
+        seg->bytes = MemCtx_Realloc(m, STRING_CHUNK_SIZE+1, (void *)seg->bytes, seg->length+1);
+        memcpy(seg->bytes+seg->length, p, copy_l);
+        seg->length += copy_l;
         remaining -= copy_l;
         p += copy_l;
     }

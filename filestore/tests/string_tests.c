@@ -34,5 +34,11 @@ status String_Tests(MemCtx *gm){
     r |= Test(String_Length(ls) == ls_l, "Expect string length of %d found %d", ls_l, String_Length(ls));
     r |= Test(String_EqualsCStr(ls, longCstr) == TRUE, "Expect string match of long string");
 
+    int value = 35072;
+    String *is = String_FromInt(m, value);
+    String *expected_is = String_From(m, "35072");
+    r |= Test(String_Length(is) == expected_is->length, "Expect for int value %d  length of %d found %d", value, expected_is->length, String_Length(is));
+    r |= Test(String_Equals(is, expected_is) == TRUE, "Expect string match of int of %d to string", value);
+
     return r;
 }

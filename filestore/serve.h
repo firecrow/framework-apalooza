@@ -2,7 +2,7 @@
 #define SERV_MAX_EVENTS 1024
 #define SERV_READ_SIZE 512
 #define SERV_WRITE_SIZE 512
-#define EPOLL_WAIT 100
+#define EPOLL_WAIT 10
 
 typedef struct serve_ctx {
     int epoll_fd;
@@ -14,3 +14,4 @@ typedef struct serve_ctx {
 
 Serve *Serve_Make(MemCtx *m);
 status Serve_Run(Serve *sctx, int port);
+status Serve_NextState(Serve *sctx, struct serve_req *req);

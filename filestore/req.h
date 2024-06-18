@@ -1,6 +1,7 @@
 typedef struct serve_req {
     status state;
     int fd;
+    int direction;
     MemCtx *m;
     byte method;
     String *_shelf;
@@ -11,7 +12,7 @@ typedef struct serve_req {
 } Req;
 
 Req *Req_Make();
-i64 Req_Parse(Serve *sctx, Req *req, String *s);
+status Req_Parse(Serve *sctx, Req *req, String *s);
 status Req_SetError(Serve *sctx, Req *req, String *msg);
 status Req_Recv(Serve *sctx, Req *req);
 status Req_Handle(Serve *sctx, Req *req);

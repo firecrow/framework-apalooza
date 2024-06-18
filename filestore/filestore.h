@@ -41,6 +41,7 @@ enum status_types {
 #define TEST_OK READY
 
 #include "error.h"
+#include "log.h"
 #include "mem.h"
 #include "string.h"
 #include "scursor.h"

@@ -40,7 +40,51 @@ static int openPortToFd(int port){
     return fd;
 }
 
-status Serve_EpollEvAdd(Serve *sctx, Req *req, int fd, int direction){
+static status Serve_EpollEvUpdate(Serve *sctx, Req *req, int direction){
+    int r;
+    struct epoll_event event;
+
+    event.events = direction;
+    event.data.ptr = (void *)req;
+
+    r = epoll_ctl(sctx->epoll_fd, EPOLL_CTL_MOD, req->fd, &event);
+    if(r != 0){
+        Error("Failed to modify file descriptor\n");
+        return ERROR;
+    }
+
+    return SUCCESS;
+}
+
+status Serve_NextState(Serve *sctx, Req *req){
+    int direction = req->direction;
+    if(req->state == READY){
+        req->state = INCOMING;
+    }
+    status state = req->state;
+    if(state == INCOMING){
+        direction = EPOLLIN;
+    }else if(state == PROCESSING){
+        direction = EPOLLIN|EPOLLOUT;
+    }else if(state == RESPONDING){
+        direction = EPOLLOUT;
+    }else if(state == ERROR){
+        direction = EPOLLOUT;
+    }else{
+        Error("Direction Not Found");
+        return ERROR;
+    }
+
+    if(direction != -1 && direction != req->direction){
+        req->direction = direction;
+        Serve_EpollEvUpdate(sctx, req, req->direction);
+        return SUCCESS;
+    }
+
+    return NOOP;
+}
+
+static status Serve_EpollEvAdd(Serve *sctx, Req *req, int fd, int direction){
     int r;
     struct epoll_event event;
 
@@ -54,12 +98,12 @@ status Serve_EpollEvAdd(Serve *sctx, Req *req, int fd, int direction){
     }
 
     req->fd = fd;
+    req->direction = direction;
 
     return SUCCESS;
 }
 
-status Serve_EpollEvRemove(Serve *sctx, Req* req){
-    printf("Removing %d\n", req->fd);
+static status Serve_EpollEvRemove(Serve *sctx, Req* req){
     int r = epoll_ctl(sctx->epoll_fd, EPOLL_CTL_DEL, req->fd, NULL);
     if(r != 0){
         Error("Failed to remove file descriptor to epoll");
@@ -69,8 +113,7 @@ status Serve_EpollEvRemove(Serve *sctx, Req* req){
     return SUCCESS;
 }
 
-status Serve_CloseReq(Serve *sctx, Req *req){
-    printf("Closing %d\n", req->fd);
+static status Serve_CloseReq(Serve *sctx, Req *req){
     status r = Serve_EpollEvRemove(sctx, req);
     if(r == SUCCESS){
         close(req->fd);
@@ -78,25 +121,6 @@ status Serve_CloseReq(Serve *sctx, Req *req){
         return SUCCESS;
     }
     return r;
-}
-
-status Serve_AcceptRound(Serve *sctx){
-    int new_fd = accept(sctx->socket_fd, (struct sockaddr*)NULL, NULL);
-    if(new_fd > 0){
-        fcntl(new_fd, F_SETFL, O_NONBLOCK);
-        Req *req = Req_Make();
-
-        if(sctx != NULL){
-            status r = Serve_EpollEvAdd(sctx, req, new_fd, EPOLLIN); 
-            if(r != SUCCESS){
-                Error("Serve_Accept");
-                return ERROR;
-            }
-            return SUCCESS;
-        }
-    }
-
-    return NOOP;
 }
 
 status Serve_Respond(Serve *sctx, Req *req){
@@ -113,7 +137,28 @@ status Serve_Respond(Serve *sctx, Req *req){
         req->state = COMPLETE;
     }
 
-    return SUCCESS;
+    return req->state;
+}
+
+status Serve_AcceptRound(Serve *sctx){
+    int new_fd = accept(sctx->socket_fd, (struct sockaddr*)NULL, NULL);
+    if(new_fd > 0){
+        fcntl(new_fd, F_SETFL, O_NONBLOCK);
+        Req *req = Req_Make();
+
+        if(sctx != NULL){
+            status r = Serve_EpollEvAdd(sctx, req, new_fd, EPOLLIN); 
+            Serve_NextState(sctx, req);
+            if(r != SUCCESS){
+                Error("Serve_Accept");
+                return ERROR;
+            }
+
+            return SUCCESS;
+        }
+    }
+
+    return NOOP;
 }
 
 status Serve_ServeRound(Serve *sctx){
@@ -129,7 +174,6 @@ status Serve_ServeRound(Serve *sctx){
         return NOOP;
     }
 
-    printf("EVCount %d\n", ev_count);
     for(int i = 0; i < ev_count; i++){
         Req *req = (Req *)events[i].data.ptr;
         if(req == NULL){
@@ -142,7 +186,7 @@ status Serve_ServeRound(Serve *sctx){
         }
 
         if(req->state == COMPLETE){
-            printf("Complete %d\n", req->fd);
+            Log(0, "Served %d - mem: %ld", req->fd, MemCount());
             r = Serve_CloseReq(sctx, req);
         }
 

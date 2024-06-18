@@ -43,6 +43,11 @@ void *MemCtx_Alloc(MemCtx *m, size_t s){
     return MemSlab_Alloc(sl, s); 
 }
 
+void *MemCtx_Realloc(MemCtx *m, size_t s, void *orig, size_t origsize){
+    void *p = MemCtx_Alloc(m, s);
+    memcpy(p, orig, origsize);
+    return p; 
+}
 
 MemCtx *MemCtx_Make(){
     return (MemCtx *) trackMalloc(sizeof(MemCtx), TYPE_MEMCTX);
