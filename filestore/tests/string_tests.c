@@ -40,5 +40,6 @@ status String_Tests(MemCtx *gm){
     r |= Test(String_Length(is) == expected_is->length, "Expect for int value %d  length of %d found %d", value, expected_is->length, String_Length(is));
     r |= Test(String_Equals(is, expected_is) == TRUE, "Expect string match of int of %d to string", value);
 
+    MemCtx_Free(m);
     return r;
 }
