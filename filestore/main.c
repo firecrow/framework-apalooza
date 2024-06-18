@@ -39,6 +39,7 @@ static status handle(MemCtx *m, char *arg){
 
 int main(int argc, char **argv){
     MemCtx *m = MemCtx_Make();
+    Tokens_Init(m);
 
     if(argc == 1){
         printf("%s [test,serve=port]", argv[0]);

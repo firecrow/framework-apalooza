@@ -12,8 +12,44 @@ static String *packageResponse(MemCtx *m, String *content){
     return s;
 }
 
+char *Method_ToString(int method){
+    if(method == METHOD_GET){
+        return "GET";
+    }else if(method == METHOD_SET){
+        return "SET";
+    }else if(method == METHOD_UPDATE){
+        return "UPDATE";
+    }else{
+        return "UNKONWN_method";
+    }
+}
+
 status Req_Parse(Serve *sctx, Req *req, String *s){
-    i64 taken = 0;
+    Range find;
+    find.s = s;
+
+    if(req->method == METHOD_UNKOWN){
+        SCursor_Reset(&find);
+
+        int i = 0;
+        while(methodTk[i] != NULL && find.position == 0 && find.state != COMPLETE){
+            if(SCursor_Find(&find, methodTk[i], POSITION_START) == COMPLETE){
+                req->method = methods[i];
+                break;
+            }
+            i++;
+        }
+    }
+
+    if(SCursor_Find(&find, space_tk, POSITION_START) != COMPLETE){
+        req->state = ERROR;
+        return req->state;
+    }
+
+    if(SCursor_Find(&find, space_tk, POSITION_START) != COMPLETE){
+        req->state = ERROR;
+        return req->state;
+    }
         
     req->state = PROCESSING;
     Serve_NextState(sctx, req);

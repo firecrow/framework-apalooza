@@ -15,3 +15,4 @@ i64 String_Length(String *s);
 status String_Equals(String *a, String *b);
 status String_EqualsCStr(String *a, char *cstr);
 String *String_FromInt(MemCtx *m, int i);
+String *String_FromRange(MemCtx *m, Range *range);

@@ -170,3 +170,21 @@ status String_Equals(String *a, String *b){
 
     return FALSE;
 }
+
+String *String_FromRange(MemCtx *m, Range *range){
+    if(range->state != COMPLETE){
+        return NULL;
+    }
+    String *s = String_init(m);
+    String *seg = range->start->seg;
+    while(1){
+        if(seg->end == NULL || seg == seg->end){
+            String_AddCstr(m, s, seg->bytes, range->start->immidiateLength);
+        }else{
+            String_AddCstr(m, s, seg->bytes+range->start->localPosition, range->start->immidiateLength);
+        }
+        seg = seg->next;
+    }
+    
+    return s;
+}

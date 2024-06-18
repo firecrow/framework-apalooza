@@ -21,7 +21,8 @@ enum types {
 };
 
 enum methods {
-    METHOD_GET,
+    METHOD_UNKOWN = 0,
+    METHOD_GET = 1,
     METHOD_SET,
     METHOD_UPDATE,
     METHOD_DELETE,
@@ -37,6 +38,12 @@ enum status_types {
     RESPONDING,
 };
 
+enum positions {
+    POSITION_CONTAINS = 0,
+    POSITION_START = 1,
+    POSITION_END,
+};
+
 #define COMPLETE SUCCESS
 #define TEST_OK READY
 
@@ -44,6 +51,7 @@ enum status_types {
 #include "log.h"
 #include "mem.h"
 #include "string.h"
+#include "tokens.h"
 #include "scursor.h"
 #include "serve.h"
 #include "req.h"

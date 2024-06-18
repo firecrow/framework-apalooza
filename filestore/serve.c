@@ -186,7 +186,7 @@ status Serve_ServeRound(Serve *sctx){
         }
 
         if(req->state == COMPLETE){
-            Log(0, "Served %d - mem: %ld", req->fd, MemCount());
+            Log(0, "Served %d %s - mem: %ld", req->fd, Method_ToString(req->method), MemCount());
             r = Serve_CloseReq(sctx, req);
         }
 
