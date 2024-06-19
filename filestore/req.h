@@ -4,6 +4,7 @@ typedef struct serve_req {
     int direction;
     MemCtx *m;
     byte method;
+    String *path;
     String *_shelf;
     String *id;
     String *body;

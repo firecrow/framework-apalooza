@@ -3,7 +3,6 @@ typedef struct strcursor {
     status state;
     String *seg;
     i64 position;
-    i64 compare;
     i64 localPosition;
     i64 segIdx;
     i64 immidiateLength;
@@ -11,8 +10,10 @@ typedef struct strcursor {
 
 typedef struct strcursor_range {
     status state;
-    SCursor *start;
-    SCursor *end;
+    i64 compare;
+    SCursor start;
+    SCursor end;
+    int length;
 } Range;
 
 SCursor* SCursor_Make(MemCtx *m, String *s);
@@ -20,3 +21,6 @@ status SCursor_Prepare(SCursor *sc, i64 length);
 status SCursor_Incr(SCursor *sc, i64 length);
 status SCursor_Reset(SCursor *sc);
 status SCursor_Find(Range *range, String *search, int anchor);
+status SCursor_SetLocals(SCursor *sc);
+status Range_Set(Range *range, String *s);
+status Range_Reset(Range *range, int anchor);

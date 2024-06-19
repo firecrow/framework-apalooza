@@ -175,15 +175,25 @@ String *String_FromRange(MemCtx *m, Range *range){
     if(range->state != COMPLETE){
         return NULL;
     }
-    String *s = String_init(m);
-    String *seg = range->start->seg;
-    while(1){
-        if(seg->end == NULL || seg == seg->end){
-            String_AddCstr(m, s, seg->bytes, range->start->immidiateLength);
-        }else{
-            String_AddCstr(m, s, seg->bytes+range->start->localPosition, range->start->immidiateLength);
+    String *s = string_Init(m);
+    String *seg = range->start.seg;
+    i64 remaining = range->length;
+
+    i64 length = min(remaining, (seg->length - range->start.localPosition));
+    char *p = (char *)seg->bytes+range->start.localPosition;
+    String_AddCstr(m, s, p, length);
+    remaining -= length;
+
+    if(remaining > 0){
+        while(seg != NULL){
+            if(seg == range->end.seg){
+                String_AddCstr(m, s, (char *)seg->bytes, range->end.localPosition);
+                break;
+            }else{
+                String_Add(m, s, seg);
+            }
+            seg = seg->next;
         }
-        seg = seg->next;
     }
     
     return s;

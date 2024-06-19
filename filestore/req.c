@@ -12,6 +12,17 @@ static String *packageResponse(MemCtx *m, String *content){
     return s;
 }
 
+static char *errBase_cstr = "HTTP/1.1 500 Error\r\nServer: filestore\r\nContent-Length: ";
+static String *packageError(MemCtx *m, String *content){
+    String *s = String_From(m, errBase_cstr);
+    String *length_s = String_FromInt(m, (int)content->length); 
+    String_Add(m, s, length_s);
+    String_AddCstr(m, s, "\r\n\r\n", 4);
+    String_Add(m, s, content);
+
+    return s;
+}
+
 char *Method_ToString(int method){
     if(method == METHOD_GET){
         return "GET";
@@ -26,14 +37,13 @@ char *Method_ToString(int method){
 
 status Req_Parse(Serve *sctx, Req *req, String *s){
     Range find;
-    find.s = s;
+    Range_Set(&find, s);
 
     if(req->method == METHOD_UNKOWN){
-        SCursor_Reset(&find);
-
         int i = 0;
-        while(methodTk[i] != NULL && find.position == 0 && find.state != COMPLETE){
-            if(SCursor_Find(&find, methodTk[i], POSITION_START) == COMPLETE){
+        int start = find.start.position;
+        while(methodTk[i] != NULL && find.state != COMPLETE){
+            if(SCursor_Find(&find, methodTk[i], TRUE) == COMPLETE){
                 req->method = methods[i];
                 break;
             }
@@ -41,12 +51,14 @@ status Req_Parse(Serve *sctx, Req *req, String *s){
         }
     }
 
-    if(SCursor_Find(&find, space_tk, POSITION_START) != COMPLETE){
+    if(SCursor_Find(&find, space_tk, TRUE) != COMPLETE){
         req->state = ERROR;
         return req->state;
     }
 
-    if(SCursor_Find(&find, space_tk, POSITION_START) != COMPLETE){
+    if(SCursor_Find(&find, space_tk, FALSE) == COMPLETE){
+        req->path = String_FromRange(req->m, &find);
+    }else{
         req->state = ERROR;
         return req->state;
     }
@@ -98,9 +110,9 @@ Req *Req_Make(){
 }
 
 status Req_SetError(Serve *sctx, Req *req, String *msg){
-    req->state = ERROR;
+    req->state = RESPONDING;
     Serve_NextState(sctx, req);
-    req->response = msg;
+    req->response = packageError(req->m, msg);
     return SUCCESS;
 }
 

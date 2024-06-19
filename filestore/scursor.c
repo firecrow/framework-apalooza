@@ -9,6 +9,34 @@ SCursor* SCursor_Make(MemCtx *m, String *s){
     return sc;
 }
 
+status Range_Set(Range *range, String *s){
+    memset(range, 0, sizeof(Range));
+    range->start.s = range->start.seg = range->end.s = range->end.seg = s;
+    return SUCCESS;
+}
+
+status Range_Reset(Range *range, int anchor){
+    range->compare = 0;
+    if(range->state == COMPLETE){
+        range->start.position = range->end.position;
+        range->start.seg = range->end.seg;
+        if(range->start.localPosition == range->start.seg->length){
+            range->start.seg = range->start.seg->next;
+        }
+        range->start.position++;
+        SCursor_SetLocals(&(range->start));
+    }
+
+    range->state = READY;
+    if(anchor){
+        range->start.state = READY;
+    }else{
+        range->start.state = PROCESSING;
+    }
+
+    return range->state;
+}
+
 status SCursor_Reset(SCursor *sc){
     String *s = sc->s;
     memset(sc, 0, sizeof(SCursor));
@@ -23,17 +51,16 @@ status SCursor_SetLocals(SCursor *sc){
     return SUCCESS;
 }
 
-
 status SCursor_Find(Range *range, String *search, int anchor){
-    SCursor start = range->start; 
-    SCursor end = range->end; 
-    if(start->s == NULL || start->s->length < 1){
+    SCursor *start = &(range->start); 
+    SCursor *end = &(range->end); 
+    if(start->seg == NULL || start->seg->length < 1){
         return NOOP;
     }
-    start->compare = 0;
+    Range_Reset(range, anchor);
     byte c;
-    int i = 0;
-    i64 start = start->position;
+    int i = range->start.position;
+    int startPosition = i;
     String *seg = start->seg;
     while(seg != NULL){
         for(
@@ -41,48 +68,42 @@ status SCursor_Find(Range *range, String *search, int anchor){
             i < seg->length;
             i++, c = seg->bytes[i]
         ){
-            if(search->bytes[start->compare] == c){
+            if(search->bytes[range->compare] == c){
                 if(start->state == READY){
                     start->position = i;
                     start->seg = seg;
                 }
-                start->compare++;
+                range->compare++;
                 start->state = PROCESSING;
-                if(start->compare == (search->length-1)){
+                if(range->compare == search->length){
                     end->position = i;
                     end->seg = seg;
-                    if(anchor == POSITION_CONTAINS){
-                        range->state = COMPLETE;
-                        break;
-                    }else if(anchor == POSITION_START){
-                        if(start->position == start){
-                            range->state = COMPLETE;
-                            break;
-                        }
-                    }else if(anchor == POSITION_END){
-                        if(start->position == String_Length(start->s) - search->length){
-                            range->state = COMPLETE;
-                            break;
-                        }
-                    }
+                    range->length = i - start->position;
+                    range->state = COMPLETE;
+                    break;
                 }
-                continue;
+            }else{
+                if(anchor){
+                    start->state = anchor ? READY :  PROCESSING;
+                    return start->state;
+                }else{
+                    start->state = anchor ? READY :  PROCESSING;
+                    start->position = startPosition;
+                    range->compare = 0;
+                }
             }
 
-            if(anchor == POSITION_START){
-                start->state = READY;
-                return start->state;
-            }else{
-                start->state = READY;
-                start->position = 0;
-                start->compare = 0;
-            }
         }
+        end->seg = seg;
         seg = seg->next;
     }
 
     SCursor_SetLocals(start);
     SCursor_SetLocals(end);
+
+    end->position = start->position + range->length;
+    SCursor_SetLocals(end);
+
     return range->state;
 }
 

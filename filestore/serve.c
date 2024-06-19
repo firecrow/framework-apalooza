@@ -182,11 +182,12 @@ status Serve_ServeRound(Serve *sctx){
         }
 
         if(req->state == ERROR){
-            Req_SetError(sctx, req, NULL);
+            String *msg = String_From(req->m, "Error");
+            Req_SetError(sctx, req, msg);
         }
 
         if(req->state == COMPLETE){
-            Log(0, "Served %d %s - mem: %ld", req->fd, Method_ToString(req->method), MemCount());
+            Log(0, "Served %s %s - mem: %ld", Method_ToString(req->method), req->path != NULL ? (char *)req->path->bytes : "", MemCount());
             r = Serve_CloseReq(sctx, req);
         }
 
