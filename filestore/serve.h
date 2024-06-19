@@ -5,11 +5,12 @@
 #define EPOLL_WAIT 10
 
 typedef struct serve_ctx {
+    MemCtx *m;
     int epoll_fd;
     int socket_fd;
     int port;
     boolean serving;
-    MemCtx *m;
+    ParseFunc *parsers;
 } Serve;
 
 Serve *Serve_Make(MemCtx *m);

@@ -35,32 +35,18 @@ char *Method_ToString(int method){
     }
 }
 
-status Req_Parse(Serve *sctx, Req *req, String *s){
+status Req_Parse(Serve *sctx, Req *req, String *s, ParseFunc parsers[]){
     Range find;
     Range_Set(&find, s);
-
-    if(req->method == METHOD_UNKOWN){
-        int i = 0;
-        int start = find.start.position;
-        while(methodTk[i] != NULL && find.state != COMPLETE){
-            if(SCursor_Find(&find, methodTk[i], TRUE) == COMPLETE){
-                req->method = methods[i];
-                break;
-            }
-            i++;
+    
+    int i = 0;
+    ParseFunc func = parsers[i];
+    while(func != NULL){
+        if(func(req, &find) != COMPLETE){
+            req->state = ERROR;
+            return req->state;
         }
-    }
-
-    if(SCursor_Find(&find, space_tk, TRUE) != COMPLETE){
-        req->state = ERROR;
-        return req->state;
-    }
-
-    if(SCursor_Find(&find, space_tk, FALSE) == COMPLETE){
-        req->path = String_FromRange(req->m, &find);
-    }else{
-        req->state = ERROR;
-        return req->state;
+        func = parsers[++i];
     }
         
     req->state = PROCESSING;
@@ -72,7 +58,7 @@ status Req_Recv(Serve *sctx, Req *req){
     uchar buff[SERV_READ_SIZE];
     size_t l = recv(req->fd, buff, SERV_READ_SIZE, 0);
     if(l > 0){
-        return Req_Parse(sctx, req, String_Make(req->m, buff));
+        return Req_Parse(sctx, req, String_Make(req->m, buff), sctx->parsers);
     }
 
     return NOOP;

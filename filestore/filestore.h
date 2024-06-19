@@ -59,5 +59,6 @@ char *State_ToString(status state);
 #include "string.h"
 #include "tokens.h"
 #include "scursor.h"
+#include "parsers.h"
 #include "serve.h"
 #include "req.h"
