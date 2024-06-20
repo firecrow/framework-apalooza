@@ -51,7 +51,7 @@ status SCursor_SetLocals(SCursor *sc){
     return SUCCESS;
 }
 
-status SCursor_Find(Range *range, String *search, int anchor){
+status SCursor_Find(Range *range, Match *search, int anchor){
     SCursor *start = &(range->start); 
     SCursor *end = &(range->end); 
     if(start->seg == NULL || start->seg->length < 1){
@@ -68,14 +68,15 @@ status SCursor_Find(Range *range, String *search, int anchor){
             i < seg->length;
             i++, c = seg->bytes[i]
         ){
-            if(search->bytes[range->compare] == c){
+            Match_Feed(search, c);
+            if(search->state != READY){
                 if(start->state == READY){
                     start->position = i;
                     start->seg = seg;
                 }
                 range->compare++;
                 start->state = PROCESSING;
-                if(range->compare == search->length){
+                if(mt->state == COMPLETE){
                     end->position = i;
                     end->seg = seg;
                     range->length = i - start->position;

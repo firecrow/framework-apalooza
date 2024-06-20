@@ -1,4 +1,5 @@
 typedef unsigned char uchar;
+typedef uint16_t cls;
 typedef uchar boolean;
 typedef uint64_t i64;
 typedef int status;
@@ -22,6 +23,7 @@ enum types {
     TYPE_REQ,
     TYPE_SERVECTX,
     TYPE_TESTSUITE,
+    TYPE_STRINGMATCH,
 };
 
 enum methods {

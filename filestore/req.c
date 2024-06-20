@@ -40,13 +40,15 @@ status Req_Parse(Serve *sctx, Req *req, String *s, ParseFunc parsers[]){
     Range_Set(&find, s);
     
     int i = 0;
-    ParseFunc func = parsers[i];
-    while(func != NULL){
-        if(func(req, &find) != COMPLETE){
+    ParserMaker pmk = parsers[i];
+    Parser *prs;
+    while(pmk != NULL){
+        prs = pmk(sctx, req);
+        if(prs->func(req, &find) != COMPLETE){
             req->state = ERROR;
             return req->state;
         }
-        func = parsers[++i];
+        pmk = parsers[++i];
     }
         
     req->state = PROCESSING;

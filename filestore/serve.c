@@ -229,6 +229,7 @@ status Serve_Run(Serve *sctx, int port){
 Serve *Serve_Make(MemCtx *m){
     Serve *sctx = (Serve *)MemCtx_Alloc(m, sizeof(Serve)); 
     sctx->m = m;
-    sctx->parsers = Parser_MakeChain(m, 3, Parse_Method, Parse_Space, Parse_Path);
+    sctx->parsers = (ParserMaker *)Array_MakeFrom(m, 3, Parser_MakeMethod, Parser_MakeSpace, Parser_MakePath);
+    sctx->methods = (char **)Array_MakeFrom(m, 3, "GET", "SET", "UPDATE");
     return sctx;
 }

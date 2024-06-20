@@ -10,7 +10,8 @@ typedef struct serve_ctx {
     int socket_fd;
     int port;
     boolean serving;
-    ParseFunc *parsers;
+    ParserMaker *parsers;
+    char **methods;
 } Serve;
 
 Serve *Serve_Make(MemCtx *m);

@@ -1,20 +1,7 @@
 #include "external.h"
 #include "filestore.h"
 
-ParseFunc *Parser_MakeChain(MemCtx *m, int count, ...){
-	va_list args;
-    va_start(args, count);
-    
-    ParseFunc *parsers = (ParseFunc *)MemCtx_Alloc(m, sizeof(ParseFunc)*(count+1));
-    for(int i = 0; i < count; i++){
-        parsers[i] = va_arg(args, ParseFunc);
-    }
-    parsers[count] = NULL;
-
-    return parsers;
-}
-
-status Parse_Method(Req *req, Range *range){
+static status parse_Method(Req *req, Range *range){
     int i = 0;
     int start = range->start.position;
     while(methodTk[i] != NULL && range->state != COMPLETE){
@@ -26,6 +13,20 @@ status Parse_Method(Req *req, Range *range){
     }
 
     return ERROR;
+}
+
+Parser *Parser_MakeMethod(Sctx *sctx, Req *req){
+    Parser *prs = (Parser *) MemCtx_Alloc(m, sizeof(Parser));
+    char *method = sctx->methods[0];
+    
+    Match **matches = (Match **)Array_MakeFrom(req->m, Array_Length(sctx->methods)); 
+    while(method !== NULL){
+        matches[i] = Match_Make(req->m, String_From(res->m, method));
+    }
+    prs->matches = matches;
+    prs->func = parse_Method;
+
+    return prs;
 }
 
 status Parse_Space(Req *req, Range *range){

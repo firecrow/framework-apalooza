@@ -11,6 +11,7 @@ typedef struct strcursor {
 typedef struct strcursor_range {
     status state;
     i64 compare;
+    String *search;
     SCursor start;
     SCursor end;
     int length;
