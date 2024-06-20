@@ -28,7 +28,7 @@ status Range_Reset(Range *range, int anchor){
     }
 
     range->state = READY;
-    if(anchor){
+    if(anchor == ANCHOR_START){
         range->start.state = READY;
     }else{
         range->start.state = PROCESSING;
@@ -51,13 +51,13 @@ status SCursor_SetLocals(SCursor *sc){
     return SUCCESS;
 }
 
-status SCursor_Find(Range *range, Match *search, int anchor){
+status SCursor_Find(Range *range, Match *search){
     SCursor *start = &(range->start); 
     SCursor *end = &(range->end); 
     if(start->seg == NULL || start->seg->length < 1){
         return NOOP;
     }
-    Range_Reset(range, anchor);
+    Range_Reset(range, search->anchor);
     byte c;
     int i = range->start.position;
     int startPosition = i;
@@ -76,7 +76,7 @@ status SCursor_Find(Range *range, Match *search, int anchor){
                 }
                 range->compare++;
                 start->state = PROCESSING;
-                if(mt->state == COMPLETE){
+                if(search->state == COMPLETE){
                     end->position = i;
                     end->seg = seg;
                     range->length = i - start->position;
@@ -84,13 +84,12 @@ status SCursor_Find(Range *range, Match *search, int anchor){
                     break;
                 }
             }else{
-                if(anchor){
-                    start->state = anchor ? READY :  PROCESSING;
+                if(search->anchor == ANCHOR_START){
+                    start->state = READY;
                     return start->state;
                 }else{
-                    start->state = anchor ? READY :  PROCESSING;
+                    start->state = READY;
                     start->position = startPosition;
-                    range->compare = 0;
                 }
             }
 

@@ -1,12 +1,18 @@
-typedef status (*ParseFunc)(Parser *parser, struct serve_req *req, Range *range);
-typedef status (*ParserMaker)(Serve *sctx, Req *req);
-ParseFunc *Parser_MakeChain(MemCtx *m, int count, ...);
+typedef status (*ParseFunc)(struct parser *parser, struct serve_req *req, Range *range);
 
 typedef struct parser {
-    Match *matches;
+    cls type;
+    void *matches;
     ParseFunc func;
 } Parser;
 
-status Parse_Method(struct serve_req *req, Range *range);
-status Parse_Space(struct serve_req *req, Range *range);
-status Parse_Path(struct serve_req *req, Range *range);
+typedef Parser *(*ParserMaker)(struct serve_ctx *sctx, struct serve_req *req);
+
+Parser *Parser_Make(MemCtx *m, cls type);
+Parser *Parser_MakeSingle(MemCtx *m, Match *mt);
+Parser *Parser_MakeMulti(MemCtx *m, Match **mt_arr);
+
+/* specific parsers */
+Parser *Parser_Method(struct serve_ctx *sctx, struct serve_req *req);
+Parser *Parser_Space(struct serve_ctx *sctx, struct serve_req *req);
+Parser *Parser_Path(struct serve_ctx *sctx,  struct serve_req *req);

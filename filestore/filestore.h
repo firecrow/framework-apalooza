@@ -10,6 +10,8 @@ struct serve_req;
 struct mem_ctx;
 struct mem_slab;
 struct strcursor_range;
+struct parser;
+typedef uint64_t Unit;
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #define max(a, b) ((a) > (b) ? (a) : (b))
@@ -24,6 +26,8 @@ enum types {
     TYPE_SERVECTX,
     TYPE_TESTSUITE,
     TYPE_STRINGMATCH,
+    TYPE_PARSER,
+    TYPE_MULTIPARSER,
 };
 
 enum methods {
@@ -58,8 +62,10 @@ char *State_ToString(status state);
 #include "error.h"
 #include "log.h"
 #include "mem.h"
+#include "array.h"
 #include "string.h"
 #include "tokens.h"
+#include "match.h"
 #include "scursor.h"
 #include "parsers.h"
 #include "serve.h"

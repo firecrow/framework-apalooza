@@ -35,7 +35,7 @@ char *Method_ToString(int method){
     }
 }
 
-status Req_Parse(Serve *sctx, Req *req, String *s, ParseFunc parsers[]){
+status Req_Parse(Serve *sctx, Req *req, String *s, ParserMaker parsers[]){
     Range find;
     Range_Set(&find, s);
     
@@ -44,7 +44,7 @@ status Req_Parse(Serve *sctx, Req *req, String *s, ParseFunc parsers[]){
     Parser *prs;
     while(pmk != NULL){
         prs = pmk(sctx, req);
-        if(prs->func(req, &find) != COMPLETE){
+        if(prs->func(prs, req, &find) != COMPLETE){
             req->state = ERROR;
             return req->state;
         }
